@@ -289,11 +289,15 @@ In the second base case ($t=u=1$), the inequality~\eqref{equation:main-lemma} be
 $$
 \Exp[f(S, \{c_1, c_2, \dots, c_\ell, c_{\ell+1}\})] \le 2 \cdot \left[f(S_c, \{c_1, c_2, \dots, c_\ell\}) + 8 \cdot f(S_u, \{c^*_1, c^*_2, \dots, c^*_k\} ) \right] \; .
 $$
-There is precisely one uncovered cluster. We choose $c_{\ell+1}$ from the
+There is precisely one uncovered cluster. The algorithm chooses $c_{\ell+1}$ from the
 uncovered cluster with probability $\frac{f(S_u, \{c_1, c_2, \dots, c_\ell\})}{f(S,
 \{c_1, c_2, \dots, c_\ell\})}$ and from a covered cluster with probability
 $\frac{f(S_c, \{c_1, c_2, \dots, c_\ell\})}{f(S, \{c_1, c_2, \dots, c_\ell\})}$.
-
+We have
+\begin{align*}
+\Exp[f(S, \{c_1, c_2, \dots, c_\ell, c_{\ell+1}\})]
+& = \Pr[c_{\ell+1} \in S_u] \cdot \Exp\left[ ? ~\middle|~ c_{\ell+1} \in S_u \right] + \Pr[c_{\ell+1} \not \in S_u] \cdot \Exp\left[? ~\middle|~ c_{\ell+1} \not \in S_u \right] \\
+\end{align*}
 TODO
 \end{proof}
 
