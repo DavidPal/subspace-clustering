@@ -245,11 +245,12 @@ Let $t \in \{0, 1, \dots, |U|\}$ and suppose $t$ new centers $c_{\ell+1},
 c_{\ell+2}, \dots, c_{\ell+t}$ centers are added using $D^2$-weighting. Let $S_u =
 \bigcup_{C \in U} C$ be the points in uncovered clusters and let $S_c = S
 \setminus S_u$. Then,
-\begin{multline*}
-\Exp \left[ f(S, C \cup \{c_{\ell+1}, c_{\ell_+2}, \dots, c_{\ell+t}\}) \right]
+\begin{multline}
+\label{equation:main-lemma}
+\Exp \left[ f(S, \{c_1, c_2, \dots, c_{\ell+t}\}) \right]
 \le (1 + H_t) \cdot \left[f(S_c, \{c_1, c_2, \dots, c_\ell\}) + 8 \cdot f(S_u, \{c^*_1, c^*_2, \dots, c^*_k\}) \right] \\
  + \frac{u-t}{u} \cdot f(S_u, \{c_1, c_2, \dots, c_\ell\} ) \; ,
-\end{multline*}
+\end{multline}
 where $H_t = \sum_{i=1}^t \frac{1}{i}$ is the $t$-th Harmonic number.
 \end{lemma}
 
@@ -268,6 +269,31 @@ We apply the lemma with $\ell=1$ and $t=k-1$ and obtain
 \end{align*}
 
 \begin{proof}[Proof of Lemma~\ref{lemma:main}]
+We prove the result by structural induction on pairs $(t,u)$ satisfying $u > 0$,
+$t \ge 0$ and $t \le u$. Namely, we show that if the result holds for $(t-1, u)$
+and for $(t-1, u-1)$ then it also holds for $(t,u)$. There are two bases cases.
+The first is $t=0$ and $u > 0$. The second is $t=u=1$.
+
+In the first base case ($t=0$ and $u > 0$), the inequality~\eqref{equation:main-lemma} becomes
+$$
+f(S, \{c_1, c_2, \dots, c_\ell\})
+\le f(S_c, \{c_1, c_2, \dots, c_\ell\}) + 8 \cdot f(S_u, \{c^*_1, c^*_2, \dots, c^*_k\}) + f(S_u, \{c_1, c_2, \dots, c_\ell\})
+$$
+The right-hand side is
+$$
+f(S, \{c_1, c_2, \dots, c_\ell\}) + 8 \cdot f(S_u, \{c^*_1, c^*_2, \dots, c^*_k\}) \; ,
+$$
+which is clearly bigger than the left-hand side.
+
+In the second base case ($t=u=1$), the inequality~\eqref{equation:main-lemma} becomes
+$$
+\Exp[f(S, \{c_1, c_2, \dots, c_\ell, c_{\ell+1}\})] \le 2 \cdot \left[f(S_c, \{c_1, c_2, \dots, c_\ell\}) + 8 \cdot f(S_u, \{c^*_1, c^*_2, \dots, c^*_k\} ) \right] \; .
+$$
+There is precisely one uncovered cluster. We choose $c_{\ell+1}$ from the
+uncovered cluster with probability $\frac{f(S_u, \{c_1, c_2, \dots, c_\ell\})}{f(S,
+\{c_1, c_2, \dots, c_\ell\})}$ and from a covered cluster with probability
+$\frac{f(S_c, \{c_1, c_2, \dots, c_\ell\})}{f(S, \{c_1, c_2, \dots, c_\ell\})}$.
+
 TODO
 \end{proof}
 
