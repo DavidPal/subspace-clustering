@@ -153,6 +153,7 @@ with Algorithm~\ref{algorithm:k-means++}.  However, for the theoretical result
 this is not necessary.
 
 \begin{theorem}[$O(\log k)$ approximation]
+\label{theorem:main}
 Let $S \subset \R^d$ be a finite set of points and let $k$ be a positive integer.
 Let $C^*$ be the set of $k$ centers minimizing the cost $f(S,\cdot)$.
 Let $C_{++}$ be the set of centers computed with $k$-means++ initialization.
@@ -214,11 +215,11 @@ We can write the left-hand side as
 & = \sum_{c \in C^*_i} \frac{(D(c))^2}{\sum_{x \in C_i^*} (D(x))^2} \sum_{x \in C_i^*} \min\left\{D(x)^2, \norm{x - c}^2\right\} \\
 \end{align*}
 We now use that $D(c) \le D(x) + \norm{x - c}$ by triangle inequality.
-Consequently, $D(c)^2 \le 2 D^2(x) + 2 \norm{x - c}^2$, which follows by squaring
-the triangle inequality and upper bounding its right-hand side.  Averaging over $x \in
-C_i^*$, we get $D(c)^2 \le \frac{2}{|C_i^*|} \sum_{x \in C_i^*} D(x)^2 +
-\frac{2}{|C_i^*|} \sum_{x \in C_i^*} \norm{x - c}^2$.
-Using this inequality, we have
+Consequently, $D(c)^2 \le 2 D^2(x) + 2 \norm{x - c}^2$, which follows by
+squaring the triangle inequality and upper bounding its right-hand side.
+Averaging over $x \in C_i^*$, we get $D(c)^2 \le \frac{2}{|C_i^*|} \sum_{x \in
+C_i^*} D(x)^2 + \frac{2}{|C_i^*|} \sum_{x \in C_i^*} \norm{x - c}^2$. Using this
+inequality, we have
 \begin{align*}
 \Exp[f(C_i^*, C \cup \{c\})]
 & = \sum_{c \in C^*_i} \frac{(D(c))^2}{\sum_{x \in C_i^*} (D(x))^2} \sum_{x \in C_i^*} \min\left\{D(x)^2, \norm{x - c}^2\right\} \\
@@ -230,8 +231,44 @@ Using this inequality, we have
 & = 4 \sum_{c \in C^*_i} \norm{c - c^*_i}^2 + 4 \sum_{x \in C_i^*} \norm{x - c_i^*}^2 \\
 & = 8 \cdot f(C^*_i, \{c^*_i\}) \; .
 \end{align*}
-
 \end{proof}
 
+\begin{lemma}
+\label{lemma:main}
+Let $S \subset \R^d$ be a finite set of points. Let $c^*_1, c^*_2, \dots, c^*_k$
+be the optimal $k$-means solution for $S$. For any $i$, let $C^*_i = \{ x \in S ~:~
+\argmin_{j=1,2,\dots,k} \norm{x - c_j} = i\}$ be the cluster corresponding to
+$c^*_i$. Let $c_1, c_2, \dots, c_\ell \in \R^d$ be an arbitrary set of cluster
+centers. Let $U = \{ C_i^* ~:~ C_i^* \cap \{c_1, c_2, \dots, c_\ell\} =
+\emptyset \}$ be the set optimal clusters uncovered by $c_1, c_2, \dots, c_k$.
+Let $t \in \{0, 1, \dots, |U|\}$ and suppose $t$ new centers $c_{\ell+1},
+c_{\ell+2}, \dots, c_{\ell+t}$ centers are added using $D^2$-weighting. Let $S_u =
+\bigcup_{C \in U} C$ be the points in uncovered clusters and let $S_c = S
+\setminus S_u$. Then,
+\begin{multline*}
+\Exp \left[ f(S, C \cup \{c_{\ell+1}, c_{\ell_+2}, \dots, c_{\ell+t}\}) \right]
+\le (1 + H_t) \cdot \left[f(S_c, \{c_1, c_2, \dots, c_\ell\}) + 8 \cdot f(S_u, \{c^*_1, c^*_2, \dots, c^*_k\}) \right] \\
+ + \frac{u-t}{u} \cdot f(S_u, \{c_1, c_2, \dots, c_\ell\} ) \; ,
+\end{multline*}
+where $H_t = \sum_{i=1}^t \frac{1}{i}$ is the $t$-th Harmonic number.
+\end{lemma}
+
+Before we prove the lemma, we show that it implies Theorem~\ref{theorem:main}.
+After first center $c_1$ is chosen by the algorithm, precisely one optimal cluster
+is covered and $k-1$ optimal clusters are uncovered. Hence, $u=k-1$.
+We apply the lemma with $\ell=1$ and $t=k-1$ and obtain
+\begin{align*}
+& \Exp \left[ f(S, \{c_1, c_2, \dots, c_k\}) \right] \\
+& \quad \le (1 + H_{k-1}) \cdot \Exp\left[f(S_c, \{c_1\}) + 8 \cdot f(S_u, \{c^*_1, c^*_2, \dots, c^*_k\}) \right] & \text{(by Lemma~\ref{lemma:main})} \\
+& \quad = (1 + H_{k-1}) \cdot \sum_{i=1}^k \Pr[S_c = C^*_i] \cdot \Exp\left[f(C^*_i, \{c_1\}) + 8 \cdot f(S \setminus C^*_i, \{c^*_1, c^*_2, \dots, c^*_k\}) ~\middle|~ S_c = C^*_i \right] \\
+& \quad \le (1 + H_{k-1}) \cdot \sum_{i=1}^k \Pr[S_c = C^*_i] \cdot \Exp\left[2 \cdot f(C^*_i, \{c^*_i\}) + 8 \cdot f(S \setminus C^*_i, \{c^*_1, c^*_2, \dots, c^*_k\}) ~\middle|~ S_c = C^*_i \right] & \text{(by Lemma~\ref{lemma:center-of-mass})}  \\
+& \quad \le (1 + H_{k-1}) \cdot \sum_{i=1}^k \Pr[S_c = C^*_i] \cdot 8 \cdot f(S, \{c^*_1, c^*_2, \dots, c^*_k\}) \\
+& \quad = 8 (1 + H_{k-1}) \cdot f(S, \{c^*_1, c^*_2, \dots, c^*_k\}) \\
+& \quad \le 8 (2 + \ln k) \cdot f(S, \{c^*_1, c^*_2, \dots, c^*_k\}) \; .
+\end{align*}
+
+\begin{proof}[Proof of Lemma~\ref{lemma:main}]
+TODO
+\end{proof}
 
 \end{document}
