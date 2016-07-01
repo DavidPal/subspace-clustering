@@ -10,6 +10,7 @@
 \newcommand{\norm}[1]{\|{#1}\|}
 
 \DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator*{\Exp}{\mathbf{E}}
 
 \title{Notes on $k$-means++ algorithm}
 \author{D\'avid P\'al}
@@ -56,8 +57,9 @@ to $c_i$ that to any other $c_j$ for all $j \neq i$.}
 
 In step $3$ of the algorithm, if a point $x \in S$ is closest to two (or more)
 different centers, the algorithm breaks ties arbitrarily according to
-consistent tie breaking rule (e.g. using cluster with smaller index $i$). The
-algorithm does alternating minimization.  This can be seen by defining a cost
+consistent tie breaking rule (e.g. using cluster with smaller index $i$).
+
+The algorithm does alternating minimization.  This can be seen by defining a cost
 function
 $$
 g(C_1, C_2, \dots, C_k; c_1, c_2, \dots, c_k) = \sum_{i=1}^k \sum_{x \in C_k} \norm{x - c_i}^2 \; .
@@ -79,6 +81,7 @@ the next lemma shows the minimum is attained for $c_i = \frac{1}{|C_i|} \sum_{x
 \in C_i} x$.
 
 \begin{lemma}[Center of Mass]
+\label{lemma:center-of-mass}
 Let $A \subset \R^d$ be a finite set of points. Let $\mu = \frac{1}{|A|}
 \sum_{x \in A} x$ be the center of mass of $A$. Then for any $c \in \R^d$,
 $$
@@ -129,7 +132,8 @@ in a particular random way.
 The algorithm maintains for any point $x$ its distance to the closest center.
 Namely, $D_i(x)$ is the distance to the closest center among $c_1, c_2, \dots,
 c_i$. Given $D_{i-1}$ and a new center $c_i$ we can compute $D_i$ in $O(|S|)$
-time. Likewise, the sampling step (step $4$) can be implemented in $O(|S|)$
+time, by the formula $D_i(x) = \min\{D_{i-1}(x), \norm{x - c_i}\}$.
+Likewise, the sampling step (step $4$) can be implemented in $O(|S|)$
 time assuming we can generate a random number from the uniform distribution
 over $[0,1]$ in constant time. Hence, the algorithm can be implemented in
 $O(k|S|)$ time.
@@ -154,5 +158,34 @@ $$
 f(S, C_{++}) \le (8 \ln k + 2) \cdot f(S, C^*) \; .
 $$
 \end{theorem}
+
+The proof of the theorem is a bit tricky. We need a few lemmas to prove it.
+
+We first show that choosing that if $k=1$, the algorithm's solution is (in
+expectation) an $2$-approximation of the optimal solution. Since the first point
+is chosen uniformly at random, this is an interesting special case.
+
+\begin{lemma}[One random center]
+\label{lemma:one-random-center}
+Let $A \subset \R^d$ be a finite set of points. Let $\mu = \frac{1}{|A|} \sum_{x \in A} x$
+be its center of mass. Let $c$ be chosen uniformly at random from $A$. Then,
+expected cost of $\{c\}$ on $S$ satisfies
+$$
+\Exp[f(A,\{c\})] = 2 \cdot f(A, \{\mu\})
+$$
+\end{lemma}
+
+\begin{proof}
+We have
+\begin{align*}
+\Exp[f(A,\{c\})]
+& = \Exp\left[\sum_{x \in A} \norm{x - c}^2\right] \\
+& = \frac{1}{|A|} \sum_{c \in A} \sum_{x \in A} \norm{x - c}^2 \\
+& = \frac{1}{|A|} \sum_{c \in A} \left[ |A| \cdot \norm{c - \mu}^2 + \sum_{x \in A} \norm{x - \mu}^2 \right] & \text{(by Lemma~\ref{lemma:center-of-mass})} \\
+& = \sum_{c \in A} \norm{c - \mu}^2 + \sum_{x \in A} \norm{x - \mu}^2 \\
+& = \sum_{x \in A} \norm{x - \mu}^2 \\
+& = 2 \cdot f(A, \{\mu\}) \; .
+\end{align*}
+\end{proof}
 
 \end{document}
