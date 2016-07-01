@@ -3,23 +3,39 @@
 \usepackage{fullpage,amssymb,amsmath,amsthm}
 \usepackage{algorithm,algorithmic}
 
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}[lemma]{Theorem}
+
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\norm}[1]{\|{#1}\|}
 
+\DeclareMathOperator*{\argmin}{argmin}
+
+\title{Notes on $k$-means++ algorithm}
+\author{D\'avid P\'al}
+
 \begin{document}
 
-Given two finite sets $S,C \subset \R^d$ we define the \emph{cost of $C$ on $S$}
-as
+\maketitle
+
+\section{$K$-means problem and Lloyd's heuristic}
+
+Given two finite sets $S,C \subset \R^d$ we define the \emph{cost of $C$ on
+$S$} as
 $$
 f(S,C) = \sum_{x \in S} \min_{c \in C} \norm{x-c}^2 \; .
 $$
+Here and in the rest of the note, $\norm{\cdot}$ denotes the Euclidean norm in
+$\R^d$; that is $\norm{v} = \sqrt{\sum_{i=1}^d v_i^2}$.  The elements of $S$
+are called \emph{input points}. The elements of $C$ are called \emph{cluster
+centers}.
 
-The \emph{$k$-means problem} is the following:
-Given a finite set $S \subset \R^d$ and a positive integer $k$, find a set $C \subset \R^d$
-such that $|C| \le k$ that minimizes $f(S,C)$.
+\textbf{The $k$-means problem} is the following optimization problem: \emph{Given a
+finite set $S \subset \R^d$ and a positive integer $k$, find a set $C \subset
+\R^d$ such that $|C| \le k$ that minimizes $f(S,C)$.}
 
 The $k$-means problem is solved in practice using a local-search heuristic,
-called Lloyd's algorithm (or sometimes simply called \emph{the $k$-means
+called Lloyd's algorithm (which is sometimes referred to as \emph{the $k$-means
 algorithm}).
 
 \begin{algorithm}[h]
@@ -27,27 +43,116 @@ algorithm}).
 \label{algorithm:lloyd}}
 \begin{algorithmic}[1]
 {
+\REQUIRE Finite set $S \subset \R^d$ and a positive integer $k$.
 \STATE{Initialize $c_1, c_2, \dots, c_k \in \R^d$ somehow}
 \WHILE{true}
 \STATE{For each $i=1,2,\dots,k$, let $C_i$ be the set of points $x \in S$ that are closer
 to $c_i$ that to any other $c_j$ for all $j \neq i$.}
-\STATE{For each $i=1,2\dots,k$, set $c_i = \frac{1}{|S_i|} \sum_{x \in C_i} x$. If centers have not changed, stop.}
+\STATE{For each $i=1,2\dots,k$, set $c_i = \frac{1}{|C_i|} \sum_{x \in C_i} x$. If none of the centers has changed, stop.}
 \ENDWHILE
 }
 \end{algorithmic}
 \end{algorithm}
 
-In step $3$ of the algorithm, if a point $x \in S$ is closest to two (or more) different centers,
-the algorithm breaks ties arbitrarily. The algorithm does alternating minimization.
-This can be seen by defining a cost function
+In step $3$ of the algorithm, if a point $x \in S$ is closest to two (or more)
+different centers, the algorithm breaks ties arbitrarily according to
+consistent tie breaking rule (e.g. using cluster with smaller index $i$). The
+algorithm does alternating minimization.  This can be seen by defining a cost
+function
 $$
-g(c_1, c_2, \dots, c_k; C_1, C_2, \dots, C_k) = \sum_{i=1}^k \sum_{x \in C_k} \norm{x - c_i}^2 \; .
+g(C_1, C_2, \dots, C_k; c_1, c_2, \dots, c_k) = \sum_{i=1}^k \sum_{x \in C_k} \norm{x - c_i}^2 \; .
 $$
-Note that $g(c_1, c_2, \dots, c_k; C_1, C_2, \dots, C_k) \ge f(\bigcup_{i=1}^k C_i, \{c_1, c_2, \dots, c_k\})$
-with equality when for all $i$, the center $c_i$ is the center of mass of $C_i$.
-In steps $3$, the algorithm keeps $c_1, c_2, \dots, c_k$ and
-it finds $(C_1, C_2, \dots, C_k)$ such that $g(c_1, c_2, \dots, c_k; C_1, C_2, \dots, C_k)$
-is minimized (subject to the constraint that $C_1, C_2, \dots, C_k$ is a partition of $S$). Similarly, in step $4$,
-the algorithm fixes $C_1, C_2, \dots, C_k$ and finds $c_1, c_2, \dots, c_k$ such that
+Note that $g(C_1, C_2, \dots, C_k; c_1, c_2, \dots, c_k) \ge f(\bigcup_{i=1}^k
+C_i, \{c_1, c_2, \dots, c_k\})$ with equality when each $C_i$ consists of
+points that are closer (or equally close) to $c_i$ that any other $c_j$. In
+steps $3$ and $4$ the cost $g(\cdot;\cdot)$ decreases by minimization over the
+first or the second argument separately.  When none of the two possible
+minimization would decrease the function value, the algorithm stops.
+Specifically, in steps $3$, the algorithm holds $c_1, c_2, \dots, c_k$ fixed
+and it finds $C_1, C_2, \dots, C_k$ such that $g(C_1, C_2, \dots, C_k; c_1,
+c_2, \dots, c_k)$ is minimized (subject to the constraint that $C_1, C_2,
+\dots, C_k$ is a partition of $S$). This is clearly achieved by assigning each
+point $x \in \bigcup_{i=1}^k C_i$ to center $c_i$ closest to it. Similarly, in
+step $4$, the algorithm holds $C_1, C_2, \dots, C_k$ fixed and finds $c_1, c_2,
+\dots, c_k$ that minimizes $g(C_1, C_2, \dots, C_k; c_1, c_2, \dots, c_k)$.  As
+the next lemma shows the minimum is attained for $c_i = \frac{1}{|C_i|} \sum_{x
+\in C_i} x$.
+
+\begin{lemma}[Center of Mass]
+Let $A \subset \R^d$ be a finite set of points. Let $\mu = \frac{1}{|A|}
+\sum_{x \in A} x$ be the center of mass of $A$. Then for any $c \in \R^d$,
+$$
+\sum_{x \in A} \norm{x - c}^2 = |A| \cdot \norm{c - \mu}^2 + \sum_{x \in A} \norm{x - \mu}^2 \; .
+$$
+In particular,
+$$
+\argmin_{c \in \R^d} \sum_{x \in A} \norm{x - c}^2 = \mu \; .
+$$
+\end{lemma}
+
+\begin{proof}
+We have
+\begin{align*}
+\sum_{x \in A} \norm{x - c}^2
+& = \sum_{x \in A} \norm{x - \mu + \mu - c}^2 \\
+& = \sum_{x \in A} \left( \norm{x - \mu}^2  + \norm{\mu - c}^2 + 2 \langle x - \mu, \mu - c \rangle \right) \\
+& = |A| \cdot \norm{c - \mu}^2 +  \sum_{x \in A} \norm{x - \mu}^2  + 2 \sum_{x \in A} \langle x - \mu, \mu - c \rangle \\
+& = |A| \cdot \norm{c - \mu}^2 +  \sum_{x \in A} \norm{x - \mu}^2  + 2 \left\langle c - \mu,  \underbrace{\sum_{x \in A} (\mu - x)}_{=0} \right\rangle \; .
+\end{align*}
+\end{proof}
+
+The lemma is essentially the parallel axis theorem (also called Steiner's
+theorem) from physics. In language of probability theory, it expresses the
+second moment of a random variable around a point in terms of variance and
+distance from of the point from the mean.
+
+\section{$K$-means++ algorithm}
+
+The $k$-means++ algorithm is a particular version of Lloyd's heuristic where in
+step $1$ of the algorithm, the centers $c_1, c_2, \dots, c_k$ are chosen
+in a particular random way.
+
+\begin{algorithm}[h]
+\caption{$k$-mean++ initialization \label{algorithm:k-means++}}
+\begin{algorithmic}[1]
+{
+\REQUIRE Finite set $S \subset \R^d$ and a positive integer $k$.
+\STATE{Choose $c_1$ uniformly at random from $S$}
+\FOR{$i=2,3,\dots,k$}
+\STATE{For any $x \in S$ define $D_{i-1}(x) = \min_{1 \le j \le i-1} \norm{x - c_j}$}
+\STATE{Choose $c_i$ at random from $S$ according to the probability distribution $p(x) = \frac{(D_{i-1}(x))^2}{\sum_{x \in S} (D_{i-1}(x))^2}$}
+\ENDFOR
+}
+\end{algorithmic}
+\end{algorithm}
+
+The algorithm maintains for any point $x$ its distance to the closest center.
+Namely, $D_i(x)$ is the distance to the closest center among $c_1, c_2, \dots,
+c_i$. Given $D_{i-1}$ and a new center $c_i$ we can compute $D_i$ in $O(|S|)$
+time. Likewise, the sampling step (step $4$) can be implemented in $O(|S|)$
+time assuming we can generate a random number from the uniform distribution
+over $[0,1]$ in constant time. Hence, the algorithm can be implemented in
+$O(k|S|)$ time.
+
+The center $c_i$ is chosen according to the so-called \emph{$D^2$-weighting}:
+Point $x \in S$ is chosen as a new center with probability proportional to
+$(D_{i-1}(x))^2$. $D^2$-weighting is the main ingredient of $k$-means++.
+Intuitively speaking, it favors a set of centers that is well spread out across
+the input set $S$.
+
+The main result about the $k$-means++ initialization is that the set of centers
+it produces is an $O(\log k)$ approximate solution to the $k$-means problem. In
+practice, one would run the Lloyd's heuristic until convergence initialized
+with Algorithm~\ref{algorithm:k-means++}.  However, for the theoretical result
+this is not necessary.
+
+\begin{theorem}[$O(\log k)$ approximation]
+Let $S \subset \R^d$ be a finite set of points and let $k$ be a positive integer.
+Let $C^*$ be the set of $k$ centers minimizing the cost $f(S,\cdot)$.
+Let $C_{++}$ be the set of centers computed with $k$-means++ initialization.
+$$
+f(S, C_{++}) \le (8 \ln k + 2) \cdot f(S, C^*) \; .
+$$
+\end{theorem}
 
 \end{document}
