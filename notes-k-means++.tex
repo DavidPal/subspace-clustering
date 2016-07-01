@@ -51,6 +51,7 @@ algorithm}).
 to $c_i$ that to any other $c_j$ for all $j \neq i$.}
 \STATE{For each $i=1,2\dots,k$, set $c_i = \frac{1}{|C_i|} \sum_{x \in C_i} x$. If none of the centers has changed, stop.}
 \ENDWHILE
+\STATE{Output $c_1, c_2, \dots, c_k$}
 }
 \end{algorithmic}
 \end{algorithm}
@@ -123,8 +124,9 @@ in a particular random way.
 \STATE{Choose $c_1$ uniformly at random from $S$}
 \FOR{$i=2,3,\dots,k$}
 \STATE{For any $x \in S$ define $D_{i-1}(x) = \min_{1 \le j \le i-1} \norm{x - c_j}$}
-\STATE{Choose $c_i$ at random from $S$ according to the probability distribution $p(x) = \frac{(D_{i-1}(x))^2}{\sum_{x \in S} (D_{i-1}(x))^2}$}
+\STATE{Choose $c_i = c$ at random from $S$ according to the probability distribution $p(c) = \frac{(D_{i-1}(c))^2}{\sum_{x \in S} (D_{i-1}(x))^2}$}
 \ENDFOR
+\STATE{Output $c_1, c_2, \dots, c_k$}
 }
 \end{algorithmic}
 \end{algorithm}
@@ -187,5 +189,49 @@ We have
 & = 2 \cdot f(A, \{\mu\}) \; .
 \end{align*}
 \end{proof}
+
+The next lemma characterizes what happens when we add a new center
+according to $D^2$-weighting to an existing set of centers.
+
+\begin{lemma}
+Let $S \subset \R^d$ be a finite set. Let $c^*_1, c^*_2, \dots, c^*_k \in \R^d$
+be the optimal $k$-means solution for $S$. Let $C^*_i = \{ x \in S ~:~
+\argmin_{j=1,2,\dots,k} \norm{x - c_j} = i\}$ be the cluster corresponding to
+$c^*_i$. Let $C \subset \R^d$ be an arbitrary non-empty finite set of cluster centers.
+Let $D(x) = \min_{c' \in C} \norm{x - c'}$. Suppose we
+choose $c$ at random from $C^*_i$ according to the probability distribution $p(c) =
+\frac{(D(c))^2}{\sum_{x \in C_i^*} (D(x))^2}$. Then,
+$$
+\Exp[f(C_i^*, C \cup \{c\})] \le 8 \cdot f(C^*_i, \{c^*_i\}) \; .
+$$
+\end{lemma}
+
+\begin{proof}
+We can write the left-hand side as
+\begin{align*}
+\Exp[f(C_i^*, C \cup \{c\})]
+& = \Exp\left[ \sum_{x \in C_i^*} \min\left\{D(x)^2, \norm{x-c}^2 \right\} \right] \\
+& = \sum_{c \in C^*_i} \frac{(D(c))^2}{\sum_{x \in C_i^*} (D(x))^2} \sum_{x \in C_i^*} \min\left\{D(x)^2, \norm{x - c}^2\right\} \\
+\end{align*}
+We now use that $D(c) \le D(x) + \norm{x - c}$ by triangle inequality.
+Consequently, $D(c)^2 \le 2 D^2(x) + 2 \norm{x - c}^2$, which follows by squaring
+the triangle inequality and upper bounding its right-hand side.  Averaging over $x \in
+C_i^*$, we get $D(c)^2 \le \frac{2}{|C_i^*|} \sum_{x \in C_i^*} D(x)^2 +
+\frac{2}{|C_i^*|} \sum_{x \in C_i^*} \norm{x - c}^2$.
+Using this inequality, we have
+\begin{align*}
+\Exp[f(C_i^*, C \cup \{c\})]
+& = \sum_{c \in C^*_i} \frac{(D(c))^2}{\sum_{x \in C_i^*} (D(x))^2} \sum_{x \in C_i^*} \min\left\{D(x)^2, \norm{x - c}^2\right\} \\
+& \le \frac{2}{|C^*_i|} \sum_{c \in C^*_i} \frac{\sum_{x \in C_i^*} D^2(x)}{\sum_{x \in C_i^*} (D(x))^2} \sum_{x \in C_i^*} \min\left\{D(x)^2, \norm{x - c}^2\right\} \\
+& \qquad + \frac{2}{|C^*_i|} \sum_{c \in C^*_i} \frac{\sum_{x \in C_i^*} \norm{x-c}^2}{\sum_{x \in C_i^*} (D(x))^2} \sum_{x \in C_i^*} \min\left\{D(x)^2, \norm{x - c}^2\right\} \\
+& \le \frac{2}{|C^*_i|} \sum_{c \in C^*_i} \sum_{x \in C_i^*} \norm{x - c}^2 + \frac{2}{|C_i^*|} \sum_{c \in C^*_i} \frac{\sum_{x \in C_i^*} \norm{x-c}^2}{\sum_{x \in C_i^*} (D(x))^2} \sum_{x \in C_i^*} D(x)^2 \\
+& = \frac{4}{|C^*_i|} \sum_{c \in C^*_i} \sum_{x \in C_i^*} \norm{x - c}^2 \\
+& = \frac{4}{|C^*_i|} \sum_{c \in C^*_i} \left[ |C^*_i| \cdot \norm{c - c^*_i}^2 + \sum_{x \in C_i^*} \norm{x - c_i^*}^2 \right] & \text{(by Lemma~\ref{lemma:center-of-mass})} \\
+& = 4 \sum_{c \in C^*_i} \norm{c - c^*_i}^2 + 4 \sum_{x \in C_i^*} \norm{x - c_i^*}^2 \\
+& = 8 \cdot f(C^*_i, \{c^*_i\}) \; .
+\end{align*}
+
+\end{proof}
+
 
 \end{document}
