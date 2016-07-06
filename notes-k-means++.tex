@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass[9pt]{article}
 
 \usepackage{fullpage,amssymb,amsmath,amsthm}
 \usepackage{algorithm,algorithmic}
@@ -101,7 +101,7 @@ We have
 & = \sum_{x \in A} \norm{x - \mu + \mu - c}^2 \\
 & = \sum_{x \in A} \left( \norm{x - \mu}^2  + \norm{\mu - c}^2 + 2 \langle x - \mu, \mu - c \rangle \right) \\
 & = |A| \cdot \norm{c - \mu}^2 +  \sum_{x \in A} \norm{x - \mu}^2  + 2 \sum_{x \in A} \langle x - \mu, \mu - c \rangle \\
-& = |A| \cdot \norm{c - \mu}^2 +  \sum_{x \in A} \norm{x - \mu}^2  + 2 \left\langle c - \mu,  \underbrace{\sum_{x \in A} (\mu - x)}_{=0} \right\rangle \; .
+& = |A| \cdot \norm{c - \mu}^2 +  \sum_{x \in A} \norm{x - \mu}^2  + 2 \left\langle \mu - c,  \underbrace{\sum_{x \in A} (x - \mu)}_{=0} \right\rangle \; .
 \end{align*}
 \end{proof}
 
@@ -132,13 +132,13 @@ in a particular random way.
 \end{algorithm}
 
 The algorithm maintains for any point $x$ its distance to the closest center.
-Namely, $D_i(x)$ is the distance to the closest center among $c_1, c_2, \dots,
-c_i$. Given $D_{i-1}$ and a new center $c_i$ we can compute $D_i$ in $O(|S|)$
+Namely, $D_i(x)$ is the distance to the closest center in $\{c_1, c_2, \dots,
+c_i\}$. Given $D_{i-1}(\cdot)$ and a new center $c_i$ we can compute $D_i(\cdot)$ in $O(d|S|)$
 time, by the formula $D_i(x) = \min\{D_{i-1}(x), \norm{x - c_i}\}$.
-Likewise, the sampling step (step $4$) can be implemented in $O(|S|)$
+The sampling step (step $4$) can be implemented in $O(|S|)$
 time assuming we can generate a random number from the uniform distribution
 over $[0,1]$ in constant time. Hence, the algorithm can be implemented in
-$O(k|S|)$ time.
+$O(dk|S|)$ time.
 
 The center $c_i$ is chosen according to the so-called \emph{$D^2$-weighting}:
 Point $x \in S$ is chosen as a new center with probability proportional to
@@ -171,10 +171,10 @@ is chosen uniformly at random, this is an interesting special case.
 \begin{lemma}[One random center]
 \label{lemma:one-random-center}
 Let $A \subset \R^d$ be a finite set of points. Let $\mu = \frac{1}{|A|} \sum_{x \in A} x$
-be its center of mass. Let $c$ be chosen uniformly at random from $A$. Then,
-expected cost of $\{c\}$ on $S$ satisfies
+be the center of mass of $A$. Let $c$ be a point chosen uniformly at random from $A$. Then,
+expected cost of $\{c\}$ on $A$ satisfies
 $$
-\Exp[f(A,\{c\})] = 2 \cdot f(A, \{\mu\})
+\Exp[f(A,\{c\})] = 2 \cdot f(A, \{\mu\}) \; .
 $$
 \end{lemma}
 
@@ -186,7 +186,7 @@ We have
 & = \frac{1}{|A|} \sum_{c \in A} \sum_{x \in A} \norm{x - c}^2 \\
 & = \frac{1}{|A|} \sum_{c \in A} \left[ |A| \cdot \norm{c - \mu}^2 + \sum_{x \in A} \norm{x - \mu}^2 \right] & \text{(by Lemma~\ref{lemma:center-of-mass})} \\
 & = \sum_{c \in A} \norm{c - \mu}^2 + \sum_{x \in A} \norm{x - \mu}^2 \\
-& = \sum_{x \in A} \norm{x - \mu}^2 \\
+& = 2 \sum_{x \in A} \norm{x - \mu}^2 \\
 & = 2 \cdot f(A, \{\mu\}) \; .
 \end{align*}
 \end{proof}
@@ -196,8 +196,9 @@ according to $D^2$-weighting to an existing set of centers.
 
 \begin{lemma}
 Let $S \subset \R^d$ be a finite set. Let $c^*_1, c^*_2, \dots, c^*_k \in \R^d$
-be the optimal $k$-means solution for $S$. Let $C^*_i = \{ x \in S ~:~
-\argmin_{j=1,2,\dots,k} \norm{x - c_j} = i\}$ be the cluster corresponding to
+be an optimal $k$-means solution for $S$. Let $i \in \{1,2,\dots,k\}$ and
+let $C^*_i = \{ x \in S ~:~
+\argmin_{j=1,2,\dots,k} \norm{x - c_j^*} = i\}$ be the cluster corresponding to
 $c^*_i$. Let $C \subset \R^d$ be an arbitrary non-empty finite set of cluster centers.
 Let $D(x) = \min_{c' \in C} \norm{x - c'}$. Suppose we
 choose $c$ at random from $C^*_i$ according to the probability distribution $p(c) =
@@ -215,15 +216,15 @@ We can write the left-hand side as
 & = \sum_{c \in C^*_i} \frac{(D(c))^2}{\sum_{x \in C_i^*} (D(x))^2} \sum_{x \in C_i^*} \min\left\{D(x)^2, \norm{x - c}^2\right\} \\
 \end{align*}
 We now use that $D(c) \le D(x) + \norm{x - c}$ by triangle inequality.
-Consequently, $D(c)^2 \le 2 D^2(x) + 2 \norm{x - c}^2$, which follows by
+Consequently, $(D(c))^2 \le 2 (D(x))^2 + 2 \norm{x - c}^2$, which follows by
 squaring the triangle inequality and upper bounding its right-hand side.
-Averaging over $x \in C_i^*$, we get $D(c)^2 \le \frac{2}{|C_i^*|} \sum_{x \in
-C_i^*} D(x)^2 + \frac{2}{|C_i^*|} \sum_{x \in C_i^*} \norm{x - c}^2$. Using this
+Averaging over $x \in C_i^*$, we get $(D(c))^2 \le \frac{2}{|C_i^*|} \sum_{x \in
+C_i^*} (D(x))^2 + \frac{2}{|C_i^*|} \sum_{x \in C_i^*} \norm{x - c}^2$. Using this
 inequality, we have
 \begin{align*}
 \Exp[f(C_i^*, C \cup \{c\})]
 & = \sum_{c \in C^*_i} \frac{(D(c))^2}{\sum_{x \in C_i^*} (D(x))^2} \sum_{x \in C_i^*} \min\left\{D(x)^2, \norm{x - c}^2\right\} \\
-& \le \frac{2}{|C^*_i|} \sum_{c \in C^*_i} \frac{\sum_{x \in C_i^*} D^2(x)}{\sum_{x \in C_i^*} (D(x))^2} \sum_{x \in C_i^*} \min\left\{D(x)^2, \norm{x - c}^2\right\} \\
+& \le \frac{2}{|C^*_i|} \sum_{c \in C^*_i} \frac{\sum_{x \in C_i^*} (D(x))^2}{\sum_{x \in C_i^*} (D(x))^2} \sum_{x \in C_i^*} \min\left\{D(x)^2, \norm{x - c}^2\right\} \\
 & \qquad + \frac{2}{|C^*_i|} \sum_{c \in C^*_i} \frac{\sum_{x \in C_i^*} \norm{x-c}^2}{\sum_{x \in C_i^*} (D(x))^2} \sum_{x \in C_i^*} \min\left\{D(x)^2, \norm{x - c}^2\right\} \\
 & \le \frac{2}{|C^*_i|} \sum_{c \in C^*_i} \sum_{x \in C_i^*} \norm{x - c}^2 + \frac{2}{|C_i^*|} \sum_{c \in C^*_i} \frac{\sum_{x \in C_i^*} \norm{x-c}^2}{\sum_{x \in C_i^*} (D(x))^2} \sum_{x \in C_i^*} D(x)^2 \\
 & = \frac{4}{|C^*_i|} \sum_{c \in C^*_i} \sum_{x \in C_i^*} \norm{x - c}^2 \\
@@ -237,10 +238,10 @@ inequality, we have
 \label{lemma:main}
 Let $S \subset \R^d$ be a finite set of points. Let $c^*_1, c^*_2, \dots, c^*_k$
 be the optimal $k$-means solution for $S$. For any $i$, let $C^*_i = \{ x \in S ~:~
-\argmin_{j=1,2,\dots,k} \norm{x - c_j} = i\}$ be the cluster corresponding to
+\argmin_{j=1,2,\dots,k} \norm{x - c_j^*} = i\}$ be the cluster corresponding to
 $c^*_i$. Let $c_1, c_2, \dots, c_\ell \in \R^d$ be an arbitrary set of cluster
 centers. Let $U = \{ C_i^* ~:~ C_i^* \cap \{c_1, c_2, \dots, c_\ell\} =
-\emptyset \}$ be the set optimal clusters uncovered by $c_1, c_2, \dots, c_k$.
+\emptyset \}$ be the set of optimal clusters uncovered by $c_1, c_2, \dots, c_k$.
 Let $t \in \{0, 1, \dots, |U|\}$ and suppose $t$ new centers $c_{\ell+1},
 c_{\ell+2}, \dots, c_{\ell+t}$ centers are added using $D^2$-weighting. Let $S_u =
 \bigcup_{C \in U} C$ be the points in uncovered clusters and let $S_c = S
@@ -269,10 +270,11 @@ We apply the lemma with $\ell=1$ and $t=k-1$ and obtain
 \end{align*}
 
 \begin{proof}[Proof of Lemma~\ref{lemma:main}]
-We prove the result by structural induction on pairs $(t,u)$ satisfying $u > 0$,
-$t \ge 0$ and $t \le u$. Namely, we show that if the result holds for $(t-1, u)$
-and for $(t-1, u-1)$ then it also holds for $(t,u)$. There are two bases cases.
-The first is $t=0$ and $u > 0$. The second is $t=u=1$.
+We prove the lemma by structural induction on pairs $(t,u)$ satisfying $u > 0$,
+$t \ge 0$ and $t \le u$. Namely, in the inductive case, we show that if the
+result holds for $(t-1, u)$ and for $(t-1, u-1)$ then it also holds for
+$(t,u)$. There are two bases cases.  The first is $t=0$ and $u > 0$. The second
+is $t=u=1$.
 
 In the first base case ($t=0$ and $u > 0$), the inequality~\eqref{equation:main-lemma} becomes
 $$
@@ -295,10 +297,19 @@ uncovered cluster with probability $\frac{f(S_u, \{c_1, c_2, \dots, c_\ell\})}{f
 $\frac{f(S_c, \{c_1, c_2, \dots, c_\ell\})}{f(S, \{c_1, c_2, \dots, c_\ell\})}$.
 We have
 \begin{align*}
-\Exp[f(S, \{c_1, c_2, \dots, c_\ell, c_{\ell+1}\})]
-& = \Pr[c_{\ell+1} \in S_u] \cdot \Exp\left[ ? ~\middle|~ c_{\ell+1} \in S_u \right] + \Pr[c_{\ell+1} \not \in S_u] \cdot \Exp\left[? ~\middle|~ c_{\ell+1} \not \in S_u \right] \\
+& \Exp[f(S, \{c_1, c_2, \dots, c_\ell, c_{\ell+1}\})] \\
+& = \Pr[c_{\ell+1} \in S_u] \cdot \Exp\left[ f(S, \{c_1, c_2, \dots, c_{\ell+1}\}) ~\middle|~ c_{\ell+1} \in S_u \right]  + \Pr[c_{\ell+1} \not \in S_u] \cdot \Exp\left[f(S, \{c_1, c_2, \dots, c_{\ell+1}\}) ~\middle|~ c_{\ell+1} \not \in S_u \right] \\
+& = \Pr[c_{\ell+1} \in S_u] \cdot \Exp\left[ f(S, \{c_1, c_2, \dots, c_{\ell+1}\}) ~\middle|~ c_{\ell+1} \in S_u \right]
++ \frac{f(S_c, \{c_1, c_2, \dots, c_\ell\})}{f(S, \{c_1, c_2, \dots, c_\ell\})} \cdot \Exp\left[f(S, \{c_1, c_2, \dots, c_{\ell+1}\}) ~\middle|~ c_{\ell+1} \not \in S_u \right] \\
+& \le \Pr[c_{\ell+1} \in S_u] \cdot \Exp\left[ f(S, \{c_1, c_2, \dots, c_{\ell+1}\}) ~\middle|~ c_{\ell+1} \in S_u \right] + f(S_c, \{c_1, c_2, \dots, c_\ell\}) \\
+& = \Pr[c_{\ell+1} \in S_u] \cdot \Exp\left[ f(S_c, \{c_1, c_2, \dots, c_{\ell+1}\}) + f(S_u, \{c_1, c_2, \dots, c_{\ell+1}\}) ~\middle|~ c_{\ell+1} \in S_u \right] + f(S_c, \{c_1, c_2, \dots, c_\ell\}) \\
+& = \Pr[c_{\ell+1} \in S_u] \cdot \Exp\left[ f(S_u, \{c_1, c_2, \dots, c_{\ell+1}\}) ~\middle|~ c_{\ell+1} \in S_u \right] + 2 \cdot f(S_c, \{c_1, c_2, \dots, c_\ell\}) \\
+& \le 8 \cdot \Pr[c_{\ell+1} \in S_u] \cdot f(S_u, \{c_1^*, c_2^*, \dots, c_k^*\}) + 2 \cdot f(S_c, \{c_1, c_2, \dots, c_\ell\}) \\
+& \le 8 \cdot f(S_u, \{c_1^*, c_2^*, \dots, c_k^*\}) + 2 \cdot f(S_c, \{c_1, c_2, \dots, c_\ell\}) \\
+& \le 16 \cdot f(S_u, \{c_1^*, c_2^*, \dots, c_k^*\}) + 2 \cdot f(S_c, \{c_1, c_2, \dots, c_\ell\}) \; .
 \end{align*}
-TODO
+
+If $u \ge t \ge 2$ or $u > t = 1$, TODO
 \end{proof}
 
 \end{document}
