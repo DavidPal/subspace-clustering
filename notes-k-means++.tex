@@ -309,7 +309,38 @@ We have
 & \le 16 \cdot f(S_u, \{c_1^*, c_2^*, \dots, c_k^*\}) + 2 \cdot f(S_c, \{c_1, c_2, \dots, c_\ell\}) \; .
 \end{align*}
 
-If $u \ge t \ge 2$ or $u > t = 1$, TODO
+In the inductive case (i.e. $u \ge t \ge 2$ or $u > t = 1$), there are two options:
+Either, the first new center $c_{\ell+1}$ falls into a covered cluster, or it falls
+into a covered cluster. The probability that $c_{\ell+1}$ into a covered cluster is
+$\frac{f(S_c, \{c_1, c_2, \dots, c_\ell\})}{f(S, \{c_1, c_2, \dots, c_{\ell}\})}$.
+The probability that it falls into an uncovered cluster is
+$\frac{f(S_u, \{c_1, c_2, \dots, c_\ell\})}{f(S, \{c_1, c_2, \dots, c_{\ell}\})}$.
+That is,
+\begin{align*}
+& \Exp[f(S, \{c_1, c_2, \dots, c_{\ell+t}\})] \\
+& = \Pr[c_{\ell+1} \in S_c] \cdot \Exp\left[ f(S,\{c_1, c_2, \dots, c_{\ell+t}\}) ~\middle|~ c_{\ell+1} \in S_c \right] + \Pr[c_{\ell+1} \in S_u] \cdot \Exp\left[f(S, \{c_1, c_2, \dots, c_{\ell+t}\}) ~\middle|~ c_{\ell+1} \in S_u \right] \\
+\end{align*}
+We apply inductive hypothesis for $(u, t-1)$ to the first term. Namely, the
+center $c_{\ell+1}$ does not increase the cost and we simply ignore it.
+\begin{align*}
+& \Exp\left[ f(S,\{c_1, c_2, \dots, c_{\ell+t}\}) ~\middle|~ c_{\ell+1} \in S_c \right] \\
+& \le \Exp\left[ f(S,\{c_1, c_2, \dots, c_{\ell}, c_{\ell+2}, c_{\ell+t}\}) \right] \\
+& \le (1 + H_{t-1}) \cdot \left[f(S_c, \{c_1, c_2, \dots, c_{\ell}\}) + 8 \cdot f(S_u, \{c^*_1, c^*_2, \dots, c^*_k\}) \right] + \frac{u-t+1}{u} \cdot f(S_u, \{c_1, c_2, \dots, c_\ell\}) \; .
+\end{align*}
+To deal with the second term, we consider each of the uncovered clusters.
+For any uncovered cluster $C \in U$, the probability that $c_{\ell+1}$ lies
+in $C$ is $\frac{f(C, \{c_1, c_2, \dots, c_{\ell}\})}{f(S,\{c_1, c_2, \dots, c_\ell\})}$.
+Hence, we have
+\begin{align*}
+& \Pr[c_{\ell+1} \in S_u] \cdot \Exp\left[f(S, \{c_1, c_2, \dots, c_{\ell+t}\}) ~\middle|~ c_{\ell+1} \in S_u \right] \\
+& = \sum_{C \in U} \Pr[c_{\ell+1} \in C] \cdot \Exp\left[f(S, \{c_1, c_2, \dots, c_{\ell+t}\}) ~\middle|~ c_{\ell+1} = x \right] \\
+& = \sum_{C \in U} \sum_{x \in C} \Pr[c_{\ell+1} = x] \cdot \Exp\left[f(S, \{c_1, c_2, \dots, c_{\ell+t}\}) ~\middle|~ c_{\ell+1} =  x \right] \\
+& \le \sum_{C \in U} \sum_{x \in C} \Pr[c_{\ell+1} = x] \cdot \bigg( (1+H_{t-1}) \cdot [f(S_c \cup C, \{c_1, c_2, \dots, c_{\ell}, x\}) + 8 \cdot f(S_u \setminus C, \{c^*_1, c^*_2, \dots, c^*_k\})] \\
+& \qquad \qquad + \frac{u-t}{u-1} \cdot f(S_u \setminus C, \{c_1, c_2, \dots, c_\ell, x \} ) \bigg) \\
+& \le \sum_{C \in U} \sum_{x \in C} \Pr[c_{\ell+1} = x] \cdot \bigg( (1+H_{t-1}) \cdot [f(S_c, \{c_1, c_2, \dots, c_{\ell}\}) + f(C, \{c_1, c_2, \dots, c_\ell, x\}) \\
+& \qquad  + 8 \cdot f(S_u, \{c^*_1, c^*_2, \dots, c^*_k\}) - 8 \cdot f(C, \{c^*_1, c^*_2, \dots, c^*_k\})] + \frac{u-t}{u-1} \cdot f(S_u \setminus C, \{c_1, c_2, \dots, c_\ell, x \} ) \bigg)
+\end{align*}
+
 \end{proof}
 
 \end{document}
