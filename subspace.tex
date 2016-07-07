@@ -12,6 +12,8 @@
 \author{D\'avid P\'al}
 \maketitle
 
+\section{Introduction}
+
 Given a finite set of points $S \subset \R^d$ and a finite \textbf{set} of
 vector subspaces $\V$ we define \emph{cost of $\V$ on $S$}
 $$
@@ -52,5 +54,25 @@ v_\ell^T x \\
 \end{pmatrix}
 $$
 is the vector of coordinates of the projection of $x$ expressed in the basis $v_1, v_2, \dots, v_{\ell}$.
+Multiplying the vector of coordinates by
+$$
+\begin{pmatrix}
+\vert & \vert &  & \vert \\
+v_1 & v_2 & \cdots & v_\ell \\
+\vert & \vert &  & \vert \\
+\end{pmatrix}
+$$
+gives the projection of $x$ to $V$.
+
+\subsection{Problem Statement}
+
+Subspace clustering: \emph{Given a set of points $S$ and positive integers
+$d_1, d_2, \dots, d_k$, find subspaces $V_1, V_2, \dots, V_k$ such that
+$\dim(v_i) = d_i$ and $f(S, \{V_1, V_2, \dots, V_k\})$ is minimized.}
+
+For $k=1$, the problem is equivalent to PCA.
+
+\begin{lemma}
+\end{lemma}
 
 \end{document}
