@@ -1,0 +1,56 @@
+\documentclass{article}
+
+\usepackage{fullpage,amssymb,amsthm,amsmath}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\V}{\mathcal{V}}
+\newcommand{\norm}[1]{\left\|#1\right\|}
+
+\begin{document}
+
+\title{Subspace Clustering}
+\author{D\'avid P\'al}
+\maketitle
+
+Given a finite set of points $S \subset \R^d$ and a finite \textbf{set} of
+vector subspaces $\V$ we define \emph{cost of $\V$ on $S$}
+$$
+f(S, \V) = \sum_{x \in S} \min_{V \in \V} \norm{x - \Pi_V x}_2^2
+$$
+where $\Pi_V$ is the $d\times d$ orthogonal projection matrix to a subspace $V$.
+That is, if $v_1, v_2, \dots, v_\ell \in \R^d$ is an orthonormal basis
+of a vector space $V$, then
+$$
+\Pi_V =
+\begin{pmatrix}
+\vert & \vert &  & \vert \\
+v_1 & v_2 & \cdots & v_\ell \\
+\vert & \vert &  & \vert \\
+\end{pmatrix}
+\begin{pmatrix}
+- & v_1^T & - \\
+- & v_2^T & - \\
+- & \vdots & - \\
+- & v_\ell^T & - \\
+\end{pmatrix} \; .
+$$
+To see this notice that $v_i^T x$ is the projection of $x$ to $v_i$
+and thus
+$$
+\begin{pmatrix}
+- & v_1^T & - \\
+- & v_2^T & - \\
+- & \vdots & - \\
+- & v_\ell^T & - \\
+\end{pmatrix} \cdot x
+=
+\begin{pmatrix}
+v_1^T x \\
+v_2^T x \\
+\vdots  \\
+v_\ell^T x \\
+\end{pmatrix}
+$$
+is the vector of coordinates of the projection of $x$ expressed in the basis $v_1, v_2, \dots, v_{\ell}$.
+
+\end{document}
