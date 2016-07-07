@@ -334,13 +334,39 @@ Hence, we have
 \begin{align*}
 & \Pr[c_{\ell+1} \in S_u] \cdot \Exp\left[f(S, \{c_1, c_2, \dots, c_{\ell+t}\}) ~\middle|~ c_{\ell+1} \in S_u \right] \\
 & = \sum_{C \in U} \Pr[c_{\ell+1} \in C] \cdot \Exp\left[f(S, \{c_1, c_2, \dots, c_{\ell+t}\}) ~\middle|~ c_{\ell+1} = x \right] \\
-& = \sum_{C \in U} \sum_{x \in C} \Pr[c_{\ell+1} = x] \cdot \Exp\left[f(S, \{c_1, c_2, \dots, c_{\ell+t}\}) ~\middle|~ c_{\ell+1} =  x \right] \\
-& \le \sum_{C \in U} \sum_{x \in C} \Pr[c_{\ell+1} = x] \cdot \bigg( (1+H_{t-1}) \cdot [f(S_c \cup C, \{c_1, c_2, \dots, c_{\ell}, x\}) + 8 \cdot f(S_u \setminus C, \{c^*_1, c^*_2, \dots, c^*_k\})] \\
-& \qquad \qquad + \frac{u-t}{u-1} \cdot f(S_u \setminus C, \{c_1, c_2, \dots, c_\ell, x \} ) \bigg) \\
-& \le \sum_{C \in U} \sum_{x \in C} \Pr[c_{\ell+1} = x] \cdot \bigg( (1+H_{t-1}) \cdot [f(S_c, \{c_1, c_2, \dots, c_{\ell}\}) + f(C, \{c_1, c_2, \dots, c_\ell, x\}) \\
-& \qquad  + 8 \cdot f(S_u, \{c^*_1, c^*_2, \dots, c^*_k\}) - 8 \cdot f(C, \{c^*_1, c^*_2, \dots, c^*_k\})] + \frac{u-t}{u-1} \cdot f(S_u \setminus C, \{c_1, c_2, \dots, c_\ell, x \} ) \bigg)
+& = \sum_{C \in U} \Pr[c_{\ell+1} \in C] \sum_{x \in C} \Pr[c_{\ell+1} = x ~|~ c_{\ell+1} \in C] \cdot \Exp\left[f(S, \{c_1, c_2, \dots, c_{\ell+t}\}) ~\middle|~ c_{\ell+1} =  x \right] \\
+& \le \sum_{C \in U} \Pr[c_{\ell+1} \in C] \sum_{x \in C} \Pr[c_{\ell+1} = x ~|~ c_{\ell+1} \in C] \cdot \bigg( (1+H_{t-1}) \cdot [f(S_c \cup C, \{c_1, c_2, \dots, c_{\ell}, x\}) \\
+&\qquad + 8 \cdot f(S_u \setminus C, \{c^*_1, c^*_2, \dots, c^*_k\})] + \frac{u-t}{u-1} \cdot f(S_u \setminus C, \{c_1, c_2, \dots, c_\ell, x \} ) \bigg) \\
+& \le \sum_{C \in U} \Pr[c_{\ell+1} \in C] \sum_{x \in C} \Pr[c_{\ell+1} = x ~|~ c_{\ell+1} \in C] \cdot \bigg( (1+H_{t-1}) \cdot [f(S_c, \{c_1, c_2, \dots, c_{\ell}\}) + f(C, \{x\}) \\
+& \qquad  + 8 \cdot f(S_u, \{c^*_1, c^*_2, \dots, c^*_k\}) - 8 \cdot f(C, \{c^*_1, c^*_2, \dots, c^*_k\})] + \frac{u-t}{u-1} \cdot f(S_u \setminus C, \{c_1, c_2, \dots, c_\ell \} ) \bigg) \\
+& \le \sum_{C \in U} \Pr[c_{\ell+1} \in C] \bigg( (1+H_{t-1}) \cdot [f(S_c, \{c_1, c_2, \dots, c_{\ell}\}) + 8 \cdot f(C, \{c^*_1, c^*_2, \dots, c^*_k\}) \\
+& \qquad  + 8 \cdot f(S_u, \{c^*_1, c^*_2, \dots, c^*_k\}) - 8 \cdot f(C, \{c^*_1, c^*_2, \dots, c^*_k\})] + \frac{u-t}{u-1} \cdot f(S_u \setminus C, \{c_1, c_2, \dots, c_\ell \} ) \bigg) \\
+\displaybreak
+& = \sum_{C \in U} \Pr[c_{\ell+1} \in C] \bigg( (1+H_{t-1}) \cdot [f(S_c, \{c_1, c_2, \dots, c_{\ell}\}) + 8 \cdot f(S_u, \{c^*_1, c^*_2, \dots, c^*_k\})] \\
+& \qquad + \frac{u-t}{u-1} \cdot \left[ f(S_u, \{c_1, c_2, \dots, c_\ell \}) - f(C, \{c_1, c_2, \dots, c_{\ell}\}) \right] \bigg) \\
+& = \sum_{C \in U} \frac{f(C, \{c_1, c_2, \dots, c_{\ell}\})}{f(S, \{c_1, c_2, \dots, c_{\ell}\})} \bigg( (1+H_{t-1}) \cdot [f(S_c, \{c_1, c_2, \dots, c_{\ell}\}) + 8 \cdot f(S_u, \{c^*_1, c^*_2, \dots, c^*_k\})] \\
+& \qquad + \frac{u-t}{u-1} \cdot \left[ f(S_u, \{c_1, c_2, \dots, c_\ell \}) - f(C, \{c_1, c_2, \dots, c_{\ell}\}) \right] \bigg) \\
+& = \frac{f(S_u, \{c_1, c_2, \dots, c_{\ell}\})}{f(S, \{c_1, c_2, \dots, c_{\ell}\})} \bigg( (1+H_{t-1}) \cdot [f(S_c, \{c_1, c_2, \dots, c_{\ell}\}) + 8 \cdot f(S_u, \{c^*_1, c^*_2, \dots, c^*_k\})] + \frac{u-t}{u-1} f(S_u, \{c_1, c_2, \dots, c_\ell \}) \bigg) \\
+& \qquad - \frac{u-t}{u-1} \frac{\sum_{C \in U}(f(C, \{c_1, c_2, \dots, c_{\ell}\}))^2}{f(S, \{c_1, c_2, \dots, c_{\ell}\})} \\
+& \le \frac{f(S_u, \{c_1, c_2, \dots, c_{\ell}\})}{f(S, \{c_1, c_2, \dots, c_{\ell}\})} \left( (1+H_{t-1}) \cdot [f(S_c, \{c_1, c_2, \dots, c_{\ell}\}) + 8 \cdot f(S_u, \{c^*_1, c^*_2, \dots, c^*_k\})] + \frac{u-t}{u-1} f(S_u, \{c_1, c_2, \dots, c_\ell \}) \right) \\
+& \qquad - \frac{u-t}{u-1} \frac{\frac{1}{u} \left(\sum_{C \in U} f(C, \{c_1, c_2, \dots, c_{\ell}\})\right)^2}{f(S, \{c_1, c_2, \dots, c_{\ell}\})} \\
+& = \frac{f(S_u, \{c_1, c_2, \dots, c_{\ell}\})}{f(S, \{c_1, c_2, \dots, c_{\ell}\})} \left( (1+H_{t-1}) \cdot [f(S_c, \{c_1, c_2, \dots, c_{\ell}\}) + 8 \cdot f(S_u, \{c^*_1, c^*_2, \dots, c^*_k\})] + \frac{u-t}{u-1} f(S_u, \{c_1, c_2, \dots, c_\ell \}) \right) \\
+& \qquad - \frac{u-t}{u-1} \frac{\frac{1}{u} \left(f(S_u, \{c_1, c_2, \dots, c_{\ell}\})\right)^2}{f(S, \{c_1, c_2, \dots, c_{\ell}\})} \\
+& = \frac{f(S_u, \{c_1, c_2, \dots, c_{\ell}\})}{f(S, \{c_1, c_2, \dots, c_{\ell}\})} \left( (1+H_{t-1}) \cdot [f(S_c, \{c_1, c_2, \dots, c_{\ell}\}) + 8 \cdot f(S_u, \{c^*_1, c^*_2, \dots, c^*_k\})] + \frac{u-t}{u} f(S_u, \{c_1, c_2, \dots, c_\ell \}) \right) \; .
 \end{align*}
-
+Thus,
+\begin{align*}
+& \Exp[f(S, \{c_1, c_2, \dots, c_{\ell+t}\})] \\
+& = \Pr[c_{\ell+1} \in S_c] \cdot \Exp\left[ f(S,\{c_1, c_2, \dots, c_{\ell+t}\}) ~\middle|~ c_{\ell+1} \in S_c \right] + \Pr[c_{\ell+1} \in S_u] \cdot \Exp\left[f(S, \{c_1, c_2, \dots, c_{\ell+t}\}) ~\middle|~ c_{\ell+1} \in S_u \right] \\
+& \le \frac{f(S_c, \{c_1, c_2, \dots, c_{\ell}\})}{f(S, \{c_1, c_2, \dots, c_{\ell}\})} \cdot \bigg( (1 + H_{t-1}) \cdot \left[f(S_c, \{c_1, c_2, \dots, c_{\ell}\}) + 8 \cdot f(S_u, \{c^*_1, c^*_2, \dots, c^*_k\}) \right] \\
+& + \frac{u-t+1}{u} \cdot f(S_u, \{c_1, c_2, \dots, c_\ell\}) \bigg) \\
+& + \frac{f(S_u, \{c_1, c_2, \dots, c_{\ell}\})}{f(S, \{c_1, c_2, \dots, c_{\ell}\})} \left( (1+H_{t-1}) \cdot [f(S_c, \{c_1, c_2, \dots, c_{\ell}\}) + 8 \cdot f(S_u, \{c^*_1, c^*_2, \dots, c^*_k\})] + \frac{u-t}{u} f(S_u, \{c_1, c_2, \dots, c_\ell \}) \right) \\
+& = (1 + H_{t-1}) \cdot \left[f(S_c, \{c_1, c_2, \dots, c_{\ell}\}) + 8 \cdot f(S_u, \{c^*_1, c^*_2, \dots, c^*_k\}) \right] + \frac{u-t}{u} \cdot f(S_u, \{c_1, c_2, \dots, c_\ell\}) \\
+& + \frac{f(S_c, \{c_1, c_2, \dots, c_{\ell}\})}{f(S, \{c_1, c_2, \dots, c_{\ell}\})} \cdot \frac{1}{u} \cdot f(S_u, \{c_1, c_2, \dots, c_\ell\}) \\
+& \le \left(1 + H_{t-1} + \frac{1}{u}\right) \cdot \left[f(S_c, \{c_1, c_2, \dots, c_{\ell}\}) + 8 \cdot f(S_u, \{c^*_1, c^*_2, \dots, c^*_k\}) \right] + \frac{u-t}{u} \cdot f(S_u, \{c_1, c_2, \dots, c_\ell\}) \\
+& \le (1 + H_t) \cdot \left[f(S_c, \{c_1, c_2, \dots, c_{\ell}\}) + 8 \cdot f(S_u, \{c^*_1, c^*_2, \dots, c^*_k\}) \right] + \frac{u-t}{u} \cdot f(S_u, \{c_1, c_2, \dots, c_\ell\})
+\end{align*}
+where we used that $\frac{1}{u} \le \frac{1}{t}$.
 \end{proof}
 
 \end{document}
