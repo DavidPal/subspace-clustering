@@ -10,6 +10,7 @@
 \newcommand{\norm}[1]{\left\|#1\right\|}
 
 \DeclareMathOperator*{\diag}{diag}
+\DeclareMathOperator*{\trace}{trace}
 
 \begin{document}
 
@@ -37,7 +38,7 @@ v_1 & v_2 & \cdots & v_r \\
 \begin{pmatrix}
 - & v_1^T & - \\
 - & v_2^T & - \\
-- & \vdots & - \\
+  & \vdots &  \\
 - & v_r^T & - \\
 \end{pmatrix} \; .
 $$
@@ -47,7 +48,7 @@ $$
 \begin{pmatrix}
 - & v_1^T & - \\
 - & v_2^T & - \\
-- & \vdots & - \\
+  & \vdots & \\
 - & v_r^T & - \\
 \end{pmatrix} \cdot x
 =
@@ -101,7 +102,7 @@ U =
 \begin{pmatrix}
 - & u_1^T & - \\
 - & u_2^T & - \\
-- & \vdots & - \\
+  & \vdots & \\
 - & u_r^T & - \\
 \end{pmatrix} \; .
 $$
@@ -116,10 +117,25 @@ f(S, \{V\})
 & = \sum_{x \in S} \norm{x - vv^T x}_2^2 \\
 & = \sum_{x \in S} (x - vv^T x)^T (x - vv^Tx) \\
 & = \sum_{x \in S} x^Tx + x^T vv^T vv^T x - 2 x^T vv^T x  \\
-& = \sum_{x \in S} x^Tx + x^T vv^T x - 2 x^T vv^T x  \\
+& = \sum_{x \in S} x^Tx + x^T vv^T x - 2 x^T vv^T x & \text{(since $v^Tv = 1$)} \\
 & = \sum_{x \in S} x^Tx - x^T vv^T x  \\
 & = \sum_{x \in S} x^Tx - v^T xx^T v  \\
+& = \trace\left(\sum_{x \in S} xx^T \right) - v U^T D U v \\
+& = \trace(U^T D U) - v U^T D U v \\
+& = \trace(D) - (Uv)^T D (Uv) \; .
 \end{align*}
+Since $U$ is orthogonal, $z=Uv$ is a unit vector. Therefore,
+$$
+z^T D z = \sum_{i=1}^d \lambda_i z_i^2 \le \lambda_1 \sum_{i=1}^d z_i^2 = \lambda_1
+$$
+and the inequality holds with equality if and only if $z=(1,0,0,\dots,0)$.
+That happens if and only if $v=u_1$ is the first eigenvector.
+In other words, for any one-dimensional vector space $V$,
+$$
+f(S, \{V\}) \ge \trace(D) - \lambda_1
+$$
+and the inequality holds with inequality if and only if $V$ is generated
+by the first eigenvector.
 \end{proof}
 
 
