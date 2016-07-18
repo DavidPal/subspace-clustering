@@ -208,6 +208,18 @@ It remains to compute $\Exp[\frac{v^TAv}{\norm{v}_2^2}]$. We have
 & = \frac{1}{\sum_{z \in S} \norm{z}_2^2} \sum_{v \in S} \sum_{x \in S} v^T x x^T v \\
 & = \frac{1}{\sum_{z \in S} \norm{z}_2^2} \sum_{v \in S} \sum_{x \in S} (v^T x)^2 \\
 \end{align*}
+In order to compute $\sum_{v,x} (v^T x)^2$, let $X$ be the $d \times |S|$
+where each column corresponds to a point in $S$.
+Let's consider the singular value decomposition of $X = U^T \Sigma V$
+where $U$ is $d \times d$ orthogonal matrix, $V$ is $|S| \times |S|$
+orthogonal matrix, and $\Sigma = \diag(\sigma_1, \sigma_2, \dots, \sigma_d)$ is $d \times |S|$ rectangular
+diagonal matrix of singular values. Then,
+\begin{align*}
+\sum_{v \in S} \sum_{x \in S} (v^T x)^2
+= \norm{X^T X}_F^2 = \trace(X^T X X^T X) = \trace(\Sigma^T \Sigma \Sigma^T \Sigma) 
+= \sum_{i=1}^d \sigma_i^4 \; .
+\end{align*}
+TODO
 \end{proof}
 
 \end{document}
