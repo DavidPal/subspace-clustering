@@ -1,6 +1,7 @@
 \documentclass{article}
 
 \usepackage{fullpage,amssymb,amsthm,amsmath}
+\usepackage{algorithm,algorithmic}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
@@ -223,5 +224,48 @@ The inequality is equivalent to the inequalities below
 \end{align*}
 \end{proof}
 
+\section{Algorithm}
+
+We consider an algorithm for one dimensional subspace clustering.
+
+\begin{algorithm}[h]
+\caption{Subspace clustering++
+\label{algorithm:subspace-clustering++}}
+\begin{algorithmic}
+{
+\REQUIRE{Finite set of points $S \subset \R^d$, number of subspaces $k \ge 1$.}
+\FOR{$x \in S$}
+\STATE{$D[x] \leftarrow \norm{x}$}
+\ENDFOR
+\FOR{$i=1,2,\dots,k$}
+\STATE{Sample $v_i \in S$ according to the distribution $\Pr[v_i = x] = \frac{D[x]^2}{\sum_{z \in S} D[z]^2}$}
+\STATE{$V_i = \langle v_i \rangle$}
+\FOR{$x \in S$}
+\STATE{$D[x] \leftarrow \min\{D[x], \ d(x, V_i)$\}}
+\ENDFOR
+\ENDFOR
+\RETURN{$\{V_1, V_2, \dots, V_k\}$}
+}
+\end{algorithmic}
+\end{algorithm}
+
+\begin{lemma}
+Let $S \subset \R^d$ be a finite set of points. Let $\V^*$ be the optimal
+clustering into $k$ subspaces of dimension one. Let $A \subseteq S$ be any
+cluster of $S$ in $\V^*$.  Suppose $\V$ is any set of subspaces and let $D(x) =
+\min_{V \in \V} d(x, V)$.  Suppose we choose $v \in A$ at random from
+according to $\Pr[v = x] = \frac{D(x)^2}{\sum_{z \in A} D(z)^2}$.
+Then,
+$$
+\Exp\left[f(A, \V \cup \{\langle v \rangle\}) \right] \le ??
+$$
+\end{lemma}
+
+\begin{proof}
+\begin{align*}
+\Exp\left[f(A, \V \cup \{\langle v \rangle\}) \right]
+& = \sum_{v \in A} \frac{D(v)^2}{\sum_{z \in A} D(z)^2} \sum_{x \in A} \min \left\{D(x)^2, \ \norm{x - \frac{vv^Tx}{\norm{v}^2}}^2 \right\} \\
+\end{align*}
+\end{proof}
 
 \end{document}
