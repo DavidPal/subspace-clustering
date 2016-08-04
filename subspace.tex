@@ -250,21 +250,20 @@ We consider an algorithm for one dimensional subspace clustering.
 \end{algorithm}
 
 \begin{lemma}
-Let $S \subset \R^d$ be a finite set of points. Let $\V^*$ be the optimal
-clustering into $k$ subspaces of dimension one. Let $A \subseteq S$ be any
-cluster of $S$ in $\V^*$.  Suppose $\V$ is any set of subspaces and let $D(x) =
-\min_{V \in \V} d(x, V)$.  Suppose we choose $v \in A$ at random from
-according to $\Pr[v = x] = \frac{D(x)^2}{\sum_{z \in A} D(z)^2}$.
+Let $S \subset \R^d$ be a finite set of points. Let $\V$ be a non-empty set of subspaces of dimension one.
+Let $D(x) = \min_{V \in \V} d(x, V)$.  Suppose we choose $v \in S$ at random
+according to $\Pr[v = x] = \frac{D(x)^2}{\sum_{z \in S} D(z)^2}$.
 Then,
 $$
-\Exp\left[f(A, \V \cup \{\langle v \rangle\}) \right] \le ??
+\Exp\left[f(S, \V \cup \{\langle v \rangle\}) \right] \le 10 \cdot \min_u f(S, \{ V^* \})
 $$
+where the minimum is taken over all $1$-dimensional subspaces $V^*$.
 \end{lemma}
 
 \begin{proof}
 \begin{align*}
-\Exp\left[f(A, \V \cup \{\langle v \rangle\}) \right]
-& = \sum_{v \in A} \frac{D(v)^2}{\sum_{z \in A} D(z)^2} \sum_{x \in A} \min \left\{D(x)^2, \ \norm{x - \frac{vv^Tx}{\norm{v}^2}}^2 \right\} \\
+\Exp\left[f(S, \V \cup \{\langle v \rangle\}) \right]
+& = \sum_{v \in S} \frac{D(v)^2}{\sum_{z \in S} D(z)^2} \sum_{x \in S} \min \left\{D(x)^2, \ \norm{x - \frac{vv^Tx}{\norm{v}^2}}^2 \right\} \\
 \end{align*}
 \end{proof}
 
