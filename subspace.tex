@@ -22,14 +22,24 @@
 
 \section{Introduction}
 
-Given a finite set of points $S \subset \R^d$ and a finite \textbf{set} of
-vector subspaces $\V$ we define \emph{cost of $\V$ on $S$}
-$$
-f(S, \V) = \sum_{x \in S} \min_{V \in \V} \norm{x - \Pi_V x}_2^2
-$$
-where $\Pi_V$ is the $d\times d$ orthogonal projection matrix to a subspace $V$.
+In \emph{subspace clustering problem}, we are given
+a finite set of points $S = \{x_1, x_2, \dots, x_n\} \subset \R^d$,
+a positive integers $k,r$
+The goal is to find $k$ vector subspaces $V_1, V_2, \dots, V_k \subseteq \R^d$,
+each of dimension $r$, that minimize
+\begin{equation}
+\label{equation:cost-function}
+\sum_{i=1}^n \min_{j=1,2,\dots,k} \left( d(x_i, V_j) \right)^2
+\end{equation}
+where $d(x,V)$ is the Euclidean distance between a point $x$
+and a subspace $V$.
+
+The distance between a subspace $V$ and a point $x$ can be expressed as
+$d(x,V) = \norm{x - \Pi_V x}$
+where $\norm{\cdot}$ is the Euclidean norm and $\Pi_V$ is
+the $d \times d$ orthogonal projection matrix onto the subspace $V$.
 That is, if $v_1, v_2, \dots, v_r \in \R^d$ is an orthonormal basis
-of the vector space $V$, then
+of the vector space $V$ then the projection matrix is
 $$
 \Pi_V =
 \begin{pmatrix}
@@ -44,35 +54,78 @@ v_1 & v_2 & \cdots & v_r \\
 - & v_r^T & - \\
 \end{pmatrix} \; .
 $$
-To see this notice that $v_i^T x$ is the projection of $x$ to $v_i$
+To see this notice that $v_i v_i^T x$ is the projection of $x$ to $v_i$
 and thus
 $$
-\begin{pmatrix}
-- & v_1^T & - \\
-- & v_2^T & - \\
-  & \vdots & \\
-- & v_r^T & - \\
-\end{pmatrix} \cdot x
+\Pi_V x
 =
-\begin{pmatrix}
-v_1^T x \\
-v_2^T x \\
-\vdots  \\
-v_r^T x \\
-\end{pmatrix}
-$$
-is the vector of coordinates of the projection of $x$ expressed in the basis $v_1, v_2, \dots, v_r$.
-Multiplying the vector of coordinates by
-$$
 \begin{pmatrix}
 \vert & \vert &  & \vert \\
 v_1 & v_2 & \cdots & v_r \\
 \vert & \vert &  & \vert \\
 \end{pmatrix}
+\begin{pmatrix}
+v_1^T \\
+v_2^T \\
+\vdots  \\
+v_r^T \\
+\end{pmatrix}
+x
+=
+\begin{pmatrix}
+\vert & \vert &  & \vert \\
+v_1 & v_2 & \cdots & v_r \\
+\vert & \vert &  & \vert \\
+\end{pmatrix}
+\begin{pmatrix}
+v_1^T x\\
+v_2^T x\\
+\vdots  \\
+v_r^T x\\
+\end{pmatrix}
+= \sum_{i=1}^r v_i v_i^T x \; .
 $$
-gives the projection of $x$ to $V$.
 
-\subsection{Problem Statement}
+\section{Reduction to Sphere}
+
+First, we consider a more general problem where each point has a weight
+associated with it. We then show that in this more general problem we can
+without a loss of generality assume that all the points lie on the unit sphere
+(i.e. have unit norm).
+
+In the \emph{weighted subspace clustering problem},
+we are given a set of weighted points $S = \{ (x_1, w_1), (x_2,w_2), \dots, (x_n, w_n) \} \subseteq \R^d \times \R_+$
+and positive integers $k$ and $r$. The goal is to find vector subspaces $V_1, V_2, \dots, V_k \subseteq \R^d$,
+each of dimension $r$, that minimize
+\begin{equation}
+\label{equation:weighted-cost-function}
+\sum_{i=1}^n w_i \min_{j=1,2,\dots,k} \left(d(x_i, V_j)\right)^2 \; .
+\end{equation}
+
+Suppose we are given any weighted points $(x_1, w_1), (x_2, w_2), \dots, (x_n, w_n)$.
+Consider weighted points $(x'_1, w'_1), (x'_2, w'_2), \dots, (x'_n, w'_n)$ where
+\begin{align*}
+x'_i & = \frac{x_i}{\norm{x_i}} & \text{and} &&
+w'_i & = w_i \norm{x_i}^2 \; .
+\end{align*}
+Since $d(c x, V) = |c| d(x,V)$ for any $c \in \R$,
+the cost \label{equation:weighted-cost-function} applied
+to $(x'_1, w'_1), (x'_2, w'_2), \dots, (x'_n, w'_n)$ is
+$$
+\sum_{i=1}^n w'_i \min_{j=1,2,\dots,k} \left(d(x'_i, V_j)\right)^2
+= \sum_{i=1}^n w_i \norm{x_i}^2 \min_{j=1,2,\dots,k} \left( \norm{x_i} d(x_i, V_j) \right)^2
+= \sum_{i=1}^n w_i \min_{j=1,2,\dots,k} \left( d(x_i, V_j) \right)^2 \; .
+$$
+
+\section{Line Clustering}
+
+In this section, we consider the problem of \emph{weighted line clustering}
+which is special case of subspace clustering with \emph{weighted subspace
+clustering} where the dimension of the subspaces is $r=1$.
+We show an $O(\log k)$ approximation algorithm for the problem.
+The algorithm relies on $k$-means++ algorithm of Aurthur and Vassilivistki.
+
+\subsection{Junk}
 
 Subspace clustering: \emph{Given a set of points $S$ and positive integers
 $r_1, r_2, \dots, r_k$, find subspaces $V_1, V_2, \dots, V_k$ such that
@@ -194,7 +247,7 @@ orthogonal matrix, and $\Sigma = \diag(\sigma_1, \sigma_2, \dots, \sigma_d)$ is 
 diagonal matrix of singular values. Then,
 \begin{align*}
 \sum_{v \in S} \sum_{x \in S} (v^T x)^2
-= \norm{X^T X}_F^2 = \trace(X^T X X^T X) = \trace(\Sigma^T \Sigma \Sigma^T \Sigma) 
+= \norm{X^T X}_F^2 = \trace(X^T X X^T X) = \trace(\Sigma^T \Sigma \Sigma^T \Sigma)
 = \sum_{i=1}^d \sigma_i^4 \; .
 \end{align*}
 On the other hand,
@@ -303,5 +356,8 @@ This is equivalent to
 \sum_{i=1}^n \sum_{j=1}^n \sin^2 \alpha_j \left(  \sin^2 \alpha_i \cos^2 \beta + \cos^2 \alpha_i \sin^2 \beta - 2 \sin \alpha_i \cos \alpha_i \sin \beta \cos \beta \right) \; .
 \end{multline*}
 \end{proof}
+
+\bibliographystyle{plain}
+\bibliography{biblio}
 
 \end{document}
