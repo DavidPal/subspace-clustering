@@ -265,6 +265,43 @@ where the minimum is taken over all $1$-dimensional subspaces $V^*$.
 \Exp\left[f(S, \V \cup \{\langle v \rangle\}) \right]
 & = \sum_{v \in S} \frac{D(v)^2}{\sum_{z \in S} D(z)^2} \sum_{x \in S} \min \left\{D(x)^2, \ \norm{x - \frac{vv^Tx}{\norm{v}^2}}^2 \right\} \\
 \end{align*}
+TODO
+\end{proof}
+
+\section{$2D$ Case}
+
+Without loss of generality, we can assume that $\norm{x} = 1$
+for all $x \in S$. If $S \subset \R^2$, then we can think
+of elements of $S$ as angles $\alpha_1, \alpha_2, \dots, \alpha_n$
+in the interval $[0,2\pi)$. Let's assume that the
+
+\begin{lemma}
+For any $\alpha_1, \alpha_2, \dots, \alpha_n$ and any $\beta$,
+$$
+\frac{\sum_{i=1}^n \sum_{j=1}^n \sin^2 \alpha_j \cdot \min\{\sin^2 \alpha_i, \sin^2(\alpha_i - \alpha_j)\}}{\sum_{j=1}^n \sin^2 \alpha_j}
+\le \sum_{i=1}^n \sin^2(\alpha_i - \beta) \; .
+$$
+\end{lemma}
+
+\begin{proof}
+The inequality is equivalent to
+$$
+\sum_{i=1}^n \sum_{j=1}^n \sin^2 \alpha_j \cdot \min\{\sin^2 \alpha_i, \sin^2(\alpha_i - \alpha_j)\}
+\le
+\left( \sum_{j=1}^n \sin^2 \alpha_j \right) \cdot \left( \sum_{i=1}^n \sin^2(\alpha_i - \beta) \right) \; .
+$$
+Using the identity $\sin(x-y) = \sin x \cos y - \cos x \sin y$, we have
+$$
+\sum_{i=1}^n \sum_{j=1}^n \sin^2 \alpha_j \cdot \min\{\sin^2 \alpha_i, (\sin \alpha_i \cos \alpha_j - \cos \alpha_i \sin \alpha_j)^2\}
+\le
+\left( \sum_{j=1}^n \sin^2 \alpha_j \right) \cdot \left( \sum_{i=1}^n (\sin \alpha_i \cos \beta - \cos \alpha_i \sin \beta)^2 \right) \; .
+$$
+This is equivalent to
+\begin{multline*}
+\sum_{i=1}^n \sum_{j=1}^n \sin^2 \alpha_j \cdot \min\{\sin^2 \alpha_i, \sin^2 \alpha_i \cos^2 \alpha_j + \cos^2 \alpha_i \sin^2 \alpha_j - 2 \sin \alpha_i \sin \alpha_j \cos \alpha_i \cos \alpha_j \}
+\\ \le
+\sum_{i=1}^n \sum_{j=1}^n \sin^2 \alpha_j \left(  \sin^2 \alpha_i \cos^2 \beta + \cos^2 \alpha_i \sin^2 \beta - 2 \sin \alpha_i \cos \alpha_i \sin \beta \cos \beta \right) \; .
+\end{multline*}
 \end{proof}
 
 \end{document}
