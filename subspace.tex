@@ -98,25 +98,26 @@ associated with it. Then, we show that, in this more general problem, we can
 without a loss of generality assume that all the points lie on the unit sphere
 (i.e. have unit norm).
 
-In the \emph{weighted subspace clustering problem},
-we are given a finite set of weighted points $S = \{ (\x_1, w_1), (\x_2, w_2), \dots, (\x_n, w_n) \} \subseteq \R^d \times \R_+$
-and positive integers $k$ and $r$. The goal is to find vector subspaces $V_1, V_2, \dots, V_k \subseteq \R^d$,
-each of dimension $r$, that minimize
+In the \emph{weighted subspace clustering problem}, we are given a finite set of
+weighted points $S = \{ (\x_1, w_1), (\x_2, w_2), \dots, (\x_n, w_n) \}
+\subseteq \R^d \times \R_+$ and positive integers $k$ and $r$. The goal is to
+find vector subspaces $V_1, V_2, \dots, V_k \subseteq \R^d$, each of dimension
+$r$, that minimize
 \begin{equation}
 \label{equation:weighted-cost-function}
 \sum_{i=1}^n w_i \min_{j=1,2,\dots,k} \left(d(\x_i, V_j)\right)^2 \; .
 \end{equation}
 
-Suppose we are given weighted points $(\x_1, w_1), (\x_2, w_2), \dots, (\x_n, w_n)$.
-Consider weighted points $(\x'_1, w'_1), (\x'_2, w'_2), \dots, (\x'_n, w'_n)$
-defined as
+Suppose we are given weighted points $(\x_1, w_1), (\x_2, w_2), \dots, (\x_n,
+w_n)$. Consider weighted points $(\x'_1, w'_1), (\x'_2, w'_2), \dots, (\x'_n,
+w'_n)$ defined as
 $$
 \x'_i = \frac{\x_i}{\norm{\x_i}} \qquad \text{and} \qquad
 w'_i = w_i \norm{\x_i}^2 \; .
 $$
-Since $d(c \x, V) = |c| d(\x,V)$ for any $c \in \R$,
-the cost \eqref{equation:weighted-cost-function} of any subspaces
-$V_1, V_2, \dots, V_k$ on $(\x'_1, w'_1), (\x'_2, w'_2), \dots, (\x'_n, w'_n)$ is
+Since $d(c \x, V) = |c| d(\x,V)$ for any $c \in \R$, the cost
+\eqref{equation:weighted-cost-function} of any subspaces $V_1, V_2, \dots, V_k$
+on $(\x'_1, w'_1), (\x'_2, w'_2), \dots, (\x'_n, w'_n)$ is
 \begin{align*}
 \sum_{i=1}^n w'_i \min_{j=1,2,\dots,k} \left(d(\x'_i, V_j)\right)^2
 & = \sum_{i=1}^n w_i \norm{x_i}^2 \min_{j=1,2,\dots,k} \left( \norm{x_i} d(\x_i, V_j) \right)^2 \\
@@ -129,32 +130,31 @@ on the original set of weighted points.
 \label{section:line-clustering}
 
 In this section, we consider the problem of \emph{weighted line clustering}
-which is a special case of \emph{weighted subspace
-clustering} where the dimension of the subspaces is $r=1$.
-We show an $O(\log k)$ approximation algorithm for the problem.
-The algorithm uses \texttt{k-means++} algorithm~\cite{Arthur-Vassilvitskii-2007} as a black box.
+which is a special case of \emph{weighted subspace clustering} where the
+dimension of the subspaces is $r=1$. We show an $O(\log k)$ approximation
+algorithm for the problem. The algorithm uses \texttt{k-means++}
+algorithm~\cite{Arthur-Vassilvitskii-2007} as a black box.
 
 \subsection{\texttt{k-means++}}
 
 Recall the \emph{$k$-means clustering problem}: We are given a set of points $S =
-\{\x_1, \x_2, \dots, \x_n\} \subset \R^d$ and an positive integer $k$. The goal is
-to find centers $\c_1, \c_2, \dots, \c_k \in \R^d$ that minimize
+\{\x_1, \x_2, \dots, \x_n\} \subset \R^d$ and a positive integer $k$. The goal
+is to find centers $\c_1, \c_2, \dots, \c_k \in \R^d$ that minimize
 $$
 \sum_{i=1}^n \min_{j=1,2,\dots,k} \norm{\x_i - \c_j}^2 \; .
 $$
-We consider \emph{weighted version} of the problem in which we are
-given a finite set of weighted points $S = \{ (\x_1, w_1), (\x_2, w_2), \dots, (\x_n, w_n)\} \subset \R^d \times \R_+$
-and a positive integer $k$. The goal is to find centers $\c_1, \c_2, \dots, \c_k$
-that minimize
+We consider \emph{weighted version} of the problem in which we are given a
+finite set of weighted points $S = \{ (\x_1, w_1), (\x_2, w_2), \dots, (\x_n,
+w_n)\} \subset \R^d \times \R_+$ and a positive integer $k$. The goal is to find
+centers $\c_1, \c_2, \dots, \c_k \in \R^d$ that minimize
 $$
 \sum_{i=1}^n w_i \min_{j=1,2,\dots,k} \norm{\x_i - \c_j}^2 \; .
 $$
 
-The \texttt{k-means++} algorithm is a randomized algorithm for the
-(weighted) $k$-means clustering problem. The centers
-chosen by the algorithm belong to the original input set.
-The expected cost of solution is an $O(\log k)$ approximation
-of the optimal solution.
+The \texttt{k-means++} algorithm is a randomized algorithm for the (weighted)
+$k$-means clustering problem. The centers chosen by the algorithm belong to the
+original input set. The expected cost of solution is an $O(\log k)$
+approximation of the optimal solution.
 
 \begin{algorithm}[h]
 \caption{Weighted \texttt{k-means++}
@@ -168,7 +168,7 @@ of the optimal solution.
 \ENDFOR
 \FOR{$j=2,3,\dots,k$}
 \FOR{$i=1,2,\dots,n$}
-\STATE{$D[x_i] \leftarrow \min\{D[x_i], \norm{\x_i - \c_{j-1}}\}$}
+\STATE{$D[\x_i] \leftarrow \min\{D[x_i], \norm{\x_i - \c_{j-1}}\}$}
 \ENDFOR
 \STATE{Choose $\c_j$ at random according to the distribution $\Pr[\c_j = \x_i] = \frac{w_i \cdot (D[\x_i])^2}{\sum_{\ell=1}^n w_\ell \cdot (D[\x_\ell])^2}$}
 \ENDFOR
@@ -191,29 +191,52 @@ would like to to find one-dimensional vector subspaces $V_1, V_2, \dots, V_k
 explained in Section~\ref{section:sphere-reduction}, we can assume without loss
 of generality that $\norm{\x_1} = \norm{\x_2} = \dots = \norm{\x_n} = 1$.
 
-To solve the problem, we define points $\widetilde \x_1, \widetilde \x_2, \dots, \widetilde \x_n \in \R^{d^2}$.
-The coordinates of $\widetilde \x_i$ are indexed by pairs $(p,q)$ where $p,q \in \{1,2,\dots,d\}$
-and are defined as
+To solve the problem, we define points $\widetilde \x_1, \widetilde \x_2, \dots,
+\widetilde \x_n \in \R^{d^2}$. The coordinates of $\widetilde \x_i$ are indexed
+by pairs $(p,q)$ where $p,q \in \{1,2,\dots,d\}$ and are defined as
 \begin{equation}
 \label{equation:outer-product-kernel}
 \widetilde \x_i[p,q] = \x_i[p] \cdot \x_i[q] \; ,
 \end{equation}
-where $\x_i[p]$ and $\x_i[q]$ are the $p$-th and $q$-th coordinates of $\x_i$ respectively.
+where $\x_i[p]$ and $\x_i[q]$ are the $p$-th and $q$-th coordinates of $\x_i$
+respectively.
 
-We give $\{(\widetilde \x_1, w_1), (\widetilde \x_2, w_2), \dots, (\widetilde \x_n, w_n) \}$
-and $k$ as input to the \texttt{k-means++} algorithm. The algorithm outputs centers
-$\widetilde \c_1, \widetilde \c_2, \dots, \widetilde \c_k \in \R^{d^2}$ such that $\{\widetilde \c_1, \widetilde c_2, \dots, \widetilde c_k\}
-\subseteq \{\widetilde \x_1, \widetilde \x_2, \dots, \widetilde \x_n\}$.
-We can thus identify each center $\widetilde \c_i \in \R^{d^2}$ with one of the original points
-$\x_j \in \R^d$; let $\c_i$ be the point in $\R^d$ corresponding to $\widetilde \c_i$.
-Let $V_i \subseteq \R^d$ be the one-dimensional subspace generated by the vector $\c_i$.
+We give $\{(\widetilde \x_1, w_1), (\widetilde \x_2, w_2), \dots, (\widetilde
+\x_n, w_n) \}$ and $k$ as input to the \texttt{k-means++} algorithm. The
+algorithm outputs centers $\widetilde \c_1, \widetilde \c_2, \dots, \widetilde
+\c_k \in \R^{d^2}$ such that $\{\widetilde \c_1, \widetilde c_2, \dots,
+\widetilde c_k\} \subseteq \{\widetilde \x_1, \widetilde \x_2, \dots, \widetilde
+\x_n\}$. We can thus identify each center $\widetilde \c_i \in \R^{d^2}$ with
+one of the original points $\x_j \in \R^d$; let $\c_i$ be the point in $\R^d$
+corresponding to $\widetilde \c_i$. Let $V_i \subseteq \R^d$ be the
+one-dimensional subspace generated by the vector $\c_i$.
+
+\begin{lemma}
+Let $\x,\c \in \R^d$ be arbitrary unit vectors. Let $\widetilde \x, \widetilde \c \in \R^{d^2}$
+be defined as $\widetilde \x[p,q] = \x[p] \cdot \x[q]$ and $\widetilde \c[p,q] = \c[p] \cdot \c[q]$
+for all $p,q \in \{1,2,\dots,d\}$. Let $V$ be the one-dimensional vector space
+generated by $c$. Then
+$$
+d(\x,V) = \norm{\widetilde \x - \widetilde \c} \; .
+$$
+\end{lemma}
+
+\begin{proof}
+\begin{align*}
+\norm{\widetilde \x - \widetilde \c}^2
+& = \norm{\x \x^T - \c \c^T}_F^2 \\
+& = \trace\left( (\x\x^T - \c \c^T) (\x \x^T - \c \c^T)^T \right) \\
+& = \trace\left( \x\x^T\x\x^T - \x\x^T \c\c^T - \c\c^T \x\x^T + \c \c^T \c \c^T \right) \\
+& = \trace\left( \x\x^T\x\x^T \right) - \trace \left( \x\x^T \c\c^T \right) - \trace \left( \c\c^T \x\x^T \right) +  \trace\left(\c \c^T \c \c^T \right) \\
+\end{align*}
+\end{proof}
 
 \begin{lemma}
 Let $S = \{(\x_1, w_1), (\x_2, w_2), \dots, (\x_n, w_n)\} \subset \R^d \times \R_+$
 such that $\norm{\x_1} = \norm{\x_2} = \dots = \norm{x_n} = 1$.
 Let $S' = \{(\widetilde \x_1, w_1), (\widetilde \x_2, w_2), \dots, (\widetilde \x_n, w_n) \} \subset \R^{d^2} \times \R_+$
 where $\widetilde \x_1, \widetilde \x_2, \dots, \widetilde \x_n$ are defined by \eqref{equation:outer-product-kernel}.
-TODO
+Let $\c_1, \c_2, \dots, \c_k$. TODO
 \end{lemma}
 
 \begin{proof}
@@ -221,8 +244,10 @@ TODO
 d(\x_i, V_j)^2
 & = \norm{\x_i - \Pi_{V_j} \x_i}^2 \\
 & = \norm{\x_i - \c_j \c_j^T \x_i}^2 \\
-& = \sum_{p=1}^d \sum_{q=1}^d ??? \\
-& = \norm{\widetilde x_i - \widetilde \c_i} \\
+& = \norm{\x_i}^2 - 2 \x_i^T \c_j \c_j^T \x_i + \norm{\c_j \c_j^T \x_i}^2 \\
+& = \trace\left( \left(\x_i - \c_j \c_j^T \x_i \right) \left( \x_i - \c_j \c_j^T \x_i \right)^T \right) \\
+& = \norm{\x_i \x_i^T - \c_j \c_j^T}_F^2 \\
+& = \norm{\widetilde \x_i - \widetilde \c_j}^2 \\
 \end{align*}
 \end{proof}
 
