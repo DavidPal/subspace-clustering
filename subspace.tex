@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass[12pt]{article}
 
 \usepackage{fullpage,amssymb,amsthm,amsmath}
 \usepackage{algorithm,algorithmic}
@@ -9,6 +9,10 @@
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\V}{\mathcal{V}}
 \newcommand{\norm}[1]{\left\|#1\right\|}
+
+\renewcommand{\v}{\mathbf{v}}
+\newcommand{\x}{\mathbf{x}}
+\renewcommand{\c}{\mathbf{c}}
 
 \DeclareMathOperator*{\diag}{diag}
 \DeclareMathOperator*{\trace}{trace}
@@ -23,109 +27,182 @@
 \section{Introduction}
 
 In \emph{subspace clustering problem}, we are given
-a finite set of points $S = \{x_1, x_2, \dots, x_n\} \subset \R^d$,
-a positive integers $k,r$
-The goal is to find $k$ vector subspaces $V_1, V_2, \dots, V_k \subseteq \R^d$,
+a finite set of points $S = \{\x_1, \x_2, \dots, \x_n\} \subset \R^d$
+and positive integers $k,r$.
+The goal is to find vector subspaces $V_1, V_2, \dots, V_k \subseteq \R^d$,
 each of dimension $r$, that minimize
 \begin{equation}
 \label{equation:cost-function}
-\sum_{i=1}^n \min_{j=1,2,\dots,k} \left( d(x_i, V_j) \right)^2
+\sum_{i=1}^n \min_{j=1,2,\dots,k} \left( d(\x_i, V_j) \right)^2
 \end{equation}
-where $d(x,V)$ is the Euclidean distance between a point $x$
+where $d(\x,V)$ is the Euclidean distance between a point $\x$
 and a subspace $V$.
 
-The distance between a subspace $V$ and a point $x$ can be expressed as
-$d(x,V) = \norm{x - \Pi_V x}$
+The distance between a subspace $V$ and a point $\x$ can be expressed as
+$d(\x,V) = \norm{\x - \Pi_V \x}$
 where $\norm{\cdot}$ is the Euclidean norm and $\Pi_V$ is
 the $d \times d$ orthogonal projection matrix onto the subspace $V$.
-That is, if $v_1, v_2, \dots, v_r \in \R^d$ is an orthonormal basis
+That is, if $\v_1, \v_2, \dots, \v_r \in \R^d$ is an orthonormal basis
 of the vector space $V$ then the projection matrix is
 $$
 \Pi_V =
 \begin{pmatrix}
 \vert & \vert &  & \vert \\
-v_1 & v_2 & \cdots & v_r \\
+\v_1 & \v_2 & \cdots & \v_r \\
 \vert & \vert &  & \vert \\
 \end{pmatrix}
 \begin{pmatrix}
-- & v_1^T & - \\
-- & v_2^T & - \\
+- & \v_1^T & - \\
+- & \v_2^T & - \\
   & \vdots &  \\
-- & v_r^T & - \\
+- & \v_r^T & - \\
 \end{pmatrix} \; .
 $$
-To see this notice that $v_i v_i^T x$ is the projection of $x$ to $v_i$
+To see this notice that $\v_i \v_i^T \x$ is the projection of $\x$ to $\v_i$
 and thus
 $$
-\Pi_V x
+\Pi_V \x
 =
 \begin{pmatrix}
 \vert & \vert &  & \vert \\
-v_1 & v_2 & \cdots & v_r \\
+\v_1 & \v_2 & \cdots & \v_r \\
 \vert & \vert &  & \vert \\
 \end{pmatrix}
 \begin{pmatrix}
-v_1^T \\
-v_2^T \\
+\v_1^T \\
+\v_2^T \\
 \vdots  \\
-v_r^T \\
+\v_r^T \\
 \end{pmatrix}
-x
+\x
 =
 \begin{pmatrix}
 \vert & \vert &  & \vert \\
-v_1 & v_2 & \cdots & v_r \\
+\v_1 & \v_2 & \cdots & \v_r \\
 \vert & \vert &  & \vert \\
 \end{pmatrix}
 \begin{pmatrix}
-v_1^T x\\
-v_2^T x\\
+\v_1^T \x\\
+\v_2^T \x\\
 \vdots  \\
-v_r^T x\\
+\v_r^T \x\\
 \end{pmatrix}
-= \sum_{i=1}^r v_i v_i^T x \; .
+= \sum_{i=1}^r \v_i \v_i^T \x \; .
 $$
 
 \section{Reduction to Sphere}
+\label{section:sphere-reduction}
 
 First, we consider a more general problem where each point has a weight
-associated with it. We then show that in this more general problem we can
+associated with it. Then, we show that, in this more general problem, we can
 without a loss of generality assume that all the points lie on the unit sphere
 (i.e. have unit norm).
 
 In the \emph{weighted subspace clustering problem},
-we are given a set of weighted points $S = \{ (x_1, w_1), (x_2,w_2), \dots, (x_n, w_n) \} \subseteq \R^d \times \R_+$
+we are given a finite set of weighted points $S = \{ (\x_1, w_1), (\x_2, w_2), \dots, (\x_n, w_n) \} \subseteq \R^d \times \R_+$
 and positive integers $k$ and $r$. The goal is to find vector subspaces $V_1, V_2, \dots, V_k \subseteq \R^d$,
 each of dimension $r$, that minimize
 \begin{equation}
 \label{equation:weighted-cost-function}
-\sum_{i=1}^n w_i \min_{j=1,2,\dots,k} \left(d(x_i, V_j)\right)^2 \; .
+\sum_{i=1}^n w_i \min_{j=1,2,\dots,k} \left(d(\x_i, V_j)\right)^2 \; .
 \end{equation}
 
-Suppose we are given any weighted points $(x_1, w_1), (x_2, w_2), \dots, (x_n, w_n)$.
-Consider weighted points $(x'_1, w'_1), (x'_2, w'_2), \dots, (x'_n, w'_n)$ where
+Suppose we are given weighted points $(\x_1, w_1), (\x_2, w_2), \dots, (\x_n, w_n)$.
+Consider weighted points $(\x'_1, w'_1), (\x'_2, w'_2), \dots, (\x'_n, w'_n)$
+defined as
+$$
+\x'_i = \frac{\x_i}{\norm{\x_i}} \qquad \text{and} \qquad
+w'_i = w_i \norm{\x_i}^2 \; .
+$$
+Since $d(c \x, V) = |c| d(\x,V)$ for any $c \in \R$,
+the cost \eqref{equation:weighted-cost-function} of any subspaces
+$V_1, V_2, \dots, V_k$ on $(\x'_1, w'_1), (\x'_2, w'_2), \dots, (\x'_n, w'_n)$ is
 \begin{align*}
-x'_i & = \frac{x_i}{\norm{x_i}} & \text{and} &&
-w'_i & = w_i \norm{x_i}^2 \; .
+\sum_{i=1}^n w'_i \min_{j=1,2,\dots,k} \left(d(\x'_i, V_j)\right)^2
+& = \sum_{i=1}^n w_i \norm{x_i}^2 \min_{j=1,2,\dots,k} \left( \norm{x_i} d(\x_i, V_j) \right)^2 \\
+& = \sum_{i=1}^n w_i \min_{j=1,2,\dots,k} \left( d(\x_i, V_j) \right)^2 \; ,
 \end{align*}
-Since $d(c x, V) = |c| d(x,V)$ for any $c \in \R$,
-the cost \label{equation:weighted-cost-function} applied
-to $(x'_1, w'_1), (x'_2, w'_2), \dots, (x'_n, w'_n)$ is
-$$
-\sum_{i=1}^n w'_i \min_{j=1,2,\dots,k} \left(d(x'_i, V_j)\right)^2
-= \sum_{i=1}^n w_i \norm{x_i}^2 \min_{j=1,2,\dots,k} \left( \norm{x_i} d(x_i, V_j) \right)^2
-= \sum_{i=1}^n w_i \min_{j=1,2,\dots,k} \left( d(x_i, V_j) \right)^2 \; .
-$$
+which is the cost \eqref{equation:weighted-cost-function}
+on the original set of weighted points.
 
 \section{Line Clustering}
+\label{section:line-clustering}
 
 In this section, we consider the problem of \emph{weighted line clustering}
-which is special case of subspace clustering with \emph{weighted subspace
+which is a special case of \emph{weighted subspace
 clustering} where the dimension of the subspaces is $r=1$.
 We show an $O(\log k)$ approximation algorithm for the problem.
-The algorithm relies on $k$-means++ algorithm of Aurthur and Vassilivistki.
+The algorithm uses \texttt{k-means++} algorithm~\cite{Arthur-Vassilvitskii-2007} as a black box.
 
-\subsection{Junk}
+\subsection{\texttt{k-means++}}
+
+Recall the \emph{$k$-means clustering problem}: We are given a set of points $S =
+\{\x_1, \x_2, \dots, \x_n\} \subset \R^d$ and an positive integer $k$. The goal is
+to find centers $\c_1, \c_2, \dots, \c_k \in \R^d$ that minimize
+$$
+\sum_{i=1}^n \min_{j=1,2,\dots,k} \norm{\x_i - \c_j}^2 \; .
+$$
+We consider \emph{weighted version} of the problem in which we are
+given a finite set of weighted points $S = \{ (\x_1, w_1), (\x_2, w_2), \dots, (\x_n, w_n)\} \subset \R^d \times \R_+$
+and a positive integer $k$. The goal is to find centers $\c_1, \c_2, \dots, \c_k$
+that minimize
+$$
+\sum_{i=1}^n w_i \min_{j=1,2,\dots,k} \norm{\x_i - \c_j}^2 \; .
+$$
+
+The \texttt{k-means++} algorithm is a randomized algorithm for the
+(weighted) $k$-means clustering problem. The centers
+chosen by the algorithm belong to the original input set.
+The expected cost of solution is an $O(\log k)$ approximation
+of the optimal solution.
+
+\begin{algorithm}[h]
+\caption{Weighted \texttt{k-means++}
+\label{algorithm:k-means++}}
+\begin{algorithmic}
+{
+\REQUIRE{Finite set of weighted points $\{(\x_1, w_1), (\x_2, w_2), \dots, (\x_n, w_n) \} \subset \R^d$, number of centers $k \ge 1$.}
+\STATE{Choose $c_1$ at random according to distribution $\Pr[\c_1 = \x_i] = \frac{w_i}{\sum_{i=1}^n w_i}$.}
+\FOR{$i=1,2,\dots,n$}
+\STATE{$D[\x_i] \leftarrow +\infty$}
+\ENDFOR
+\FOR{$j=2,3,\dots,k$}
+\FOR{$i=1,2,\dots,n$}
+\STATE{$D[x_i] \leftarrow \min\{D[x_i], \norm{\x_i - \c_{j-1}}\}$}
+\ENDFOR
+\STATE{Choose $\c_j$ at random according to the distribution $\Pr[\c_j = \x_i] = \frac{w_i \cdot (D[\x_i])^2}{\sum_{\ell=1}^n w_\ell \cdot (D[\x_\ell])^2}$}
+\ENDFOR
+\RETURN{$\c_1, \c_2, \dots, \c_k$}
+}
+\end{algorithmic}
+\end{algorithm}
+
+The variable $D[x_i]$ maintained by the algorithm is the distance from $\x_i$ to
+the closest center chosen so far. In other words, after iteration $j$ of the outer for loop
+is $D[\x_i] = \min\{ \norm{\x_i - \c_1}, \norm{\x_i - \c_2}, \dots, \norm{x_i -
+\c_{j-1}}\}$.
+
+\subsection{Reduction from Line Clustering to \texttt{k-means++}}
+
+Suppose we are given a weighted set of points $S=\{(\x_1, w_1), (\x_2, w_2),
+\dots, (\x_n, w_n)\} \subset \R^d \times \R_+$ and an positive integer $k$. We
+would like to to find one-dimensional vector subspaces $V_1, V_2, \dots, V_k
+\subseteq \R^d$ that minimize cost \eqref{equation:weighted-cost-function}. As
+explained in Section~\ref{section:sphere-reduction}, we can assume without loss
+of generality that $\norm{\x_1} = \norm{\x_2} = \dots = \norm{\x_n} = 1$.
+
+We now define points $\widetilde \x_1, \widetilde \x_2, \dots, \widetilde \x_n \in \R^{d^2}$.
+The coordinates of $\widetilde \x_i$ are indexed by pairs $(p,q)$ where $p,q \in \{1,2,\dots,d\}$
+and are defined as
+$$
+\widetilde \x_i[p,q] = \x_i[p] \cdot \x_i[q] \; ,
+$$
+where $\x_i[p]$ and $\x_i[q]$ are the $p$-th and $q$-th coordinates of $\x_i$ respectively.
+
+We give $\{(\widetilde \x_1, w_1), (\widetilde \x_2, w_2), \dots, (\widetilde \x_n, w_n) \}$
+and $k$ as input to the \texttt{k-means++} algorithm.
+
+\section{Junk}
 
 Subspace clustering: \emph{Given a set of points $S$ and positive integers
 $r_1, r_2, \dots, r_k$, find subspaces $V_1, V_2, \dots, V_k$ such that
